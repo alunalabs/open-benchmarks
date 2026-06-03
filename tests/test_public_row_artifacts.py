@@ -21,12 +21,16 @@ def test_public_row_artifact_counts() -> None:
     assert summary["biobench_legacy_v2"]["unfiltered_rows"] == 805
     assert summary["patient_level"]["universal_patient_response_axes_clinical_rows"] == 23
     assert summary["patient_level"]["crc_patient_clinical_rows"] == 11
-    assert summary["patient_level"]["crc_moa_tailored_probability_rows"] == 11
+    assert summary["patient_level"]["crc_moa_tailored_rank_score_rows"] == 11
     assert (
         summary["patient_level"]["crc_moa_tailored_default_score_column"]
-        == "response_probability_module_calibrated"
+        == "response_score_rank_calibrated"
     )
     assert round(summary["patient_level"]["crc_moa_tailored_default_auc_response_high"], 3) == 0.800
+    assert (
+        round(summary["patient_level"]["crc_moa_tailored_default_fixed_0p5_balanced_accuracy"], 3)
+        == 0.733
+    )
     assert summary["cohort_level"]["cohort_benchmark_v2_clinical_rows"] == 69
     assert summary["cohort_level"]["cohort_benchmark_v2_orr_labeled_clinical_rows"] == 66
     assert summary["cohort_level"]["cohort_benchmark_v2_eval_clinical_rows"] == 63
@@ -67,10 +71,10 @@ def test_public_clinical_rows_are_metadata_only() -> None:
     assert cohort_forbidden.isdisjoint(cohort_rows[0])
 
 
-def test_crc_patient_moa_tailored_probability_rows() -> None:
+def test_crc_patient_moa_tailored_rank_score_rows() -> None:
     rows = read_csv(
         "patient-level-bench/model_scores/crc_moa_tailored_20260525/"
-        "crc_patient_moa_tailored_probabilities_20260525.csv"
+        "crc_patient_moa_tailored_rank_scores_20260525.csv"
     )
     metrics = read_csv(
         "patient-level-bench/model_scores/crc_moa_tailored_20260525/"
@@ -91,8 +95,12 @@ def test_crc_patient_moa_tailored_probability_rows() -> None:
     )
 
     forbidden = {
+        "response_probability_uncalibrated",
+        "response_probability_module_calibrated",
+        "nonresponse_risk_module_calibrated",
         "response_probability_isotonic_apparent",
         "nonresponse_risk_isotonic_apparent",
+        "predicted_responder_module_p_ge_0p5",
         "predicted_responder_isotonic_ge_0p5",
     }
     support_cols = [
@@ -105,27 +113,25 @@ def test_crc_patient_moa_tailored_probability_rows() -> None:
 
     assert len(rows) == 11
     assert forbidden.isdisjoint(rows[0])
-    assert summary["default_score_column"] == "response_probability_module_calibrated"
+    assert summary["default_score_column"] == "response_score_rank_calibrated"
     assert summary["n_responders"] == 5
     assert summary["n_nonresponders"] == 6
     assert summary["uses_patient_labels_for_default_probability_assignment"] is False
     assert summary["uses_observed_orr_calibration"] is False
     assert summary["uses_z_scores"] is False
     assert summary["uses_drug_prior"] is False
-    assert "crc_patient_moa_tailored_probabilities_20260525.csv" in manifest
+    assert "crc_patient_moa_tailored_rank_scores_20260525.csv" in manifest
+    assert "crc_patient_moa_tailored_probabilities_20260525.csv" not in manifest
     assert round(summary["default_metrics"]["auc_response_high"], 3) == 0.800
-    assert round(summary["default_metrics"]["fixed_0p5_balanced_accuracy"], 3) == 0.617
+    assert round(summary["default_metrics"]["fixed_0p5_balanced_accuracy"], 3) == 0.733
 
-    default_metric = next(
-        row for row in metrics if row["score_col"] == "response_probability_module_calibrated"
-    )
-    raw_metric = next(
-        row for row in metrics if row["score_col"] == "response_probability_uncalibrated"
-    )
+    assert len(metrics) == 1
+    default_metric = metrics[0]
+    assert default_metric["score_col"] == "response_score_rank_calibrated"
     assert default_metric["label_use"] == "none"
-    assert raw_metric["label_use"] == "none"
     assert default_metric["n"] == "11"
 
+    intermediate_by_patient: dict[str, float] = {}
     for row in rows:
         supports = [float(row[col]) for col in support_cols]
         coverage = sum(value > 0.0 for value in supports) / len(supports)
@@ -133,12 +139,7 @@ def test_crc_patient_moa_tailored_probability_rows() -> None:
         p10_support = float(row["ct_hetero_conversion_p10"])
         effective_coverage = min(1.0, coverage / 0.80)
 
-        raw = min(
-            _sigmoid(coverage, center=0.90, scale=0.05),
-            _sigmoid(mean_support, center=0.0, scale=0.015),
-            _sigmoid(p10_support, center=-0.02, scale=0.015),
-        )
-        calibrated = min(
+        intermediate = min(
             _sigmoid(effective_coverage, center=0.90, scale=0.05),
             _sigmoid(mean_support, center=0.0, scale=0.015),
             _sigmoid(p10_support, center=-0.02, scale=0.015),
@@ -147,8 +148,17 @@ def test_crc_patient_moa_tailored_probability_rows() -> None:
         assert abs(float(row["ct_hetero_conversion_fraction_positive"]) - coverage) < 1e-12
         assert abs(float(row["ct_hetero_conversion_mean"]) - mean_support) < 1e-12
         assert abs(float(row["module_coverage_effective"]) - effective_coverage) < 1e-12
-        assert abs(float(row["response_probability_uncalibrated"]) - raw) < 1e-12
-        assert abs(float(row["response_probability_module_calibrated"]) - calibrated) < 1e-12
+        intermediate_by_patient[row["source_patient_id"]] = intermediate
+
+    ranked_patients = sorted(intermediate_by_patient, key=intermediate_by_patient.get)
+    expected_rank = {
+        patient_id: (rank + 1) / len(ranked_patients)
+        for rank, patient_id in enumerate(ranked_patients)
+    }
+    for row in rows:
+        rank_score = float(row["response_score_rank_calibrated"])
+        assert abs(rank_score - expected_rank[row["source_patient_id"]]) < 1e-12
+        assert (rank_score >= 0.5) == (row["predicted_responder_rank_ge_0p5"] == "True")
 
 
 def _sigmoid(value: float, *, center: float, scale: float) -> float:

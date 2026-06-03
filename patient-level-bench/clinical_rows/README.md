@@ -13,5 +13,5 @@ Files:
 These files include row identifiers and clinical labels/metadata only. They do
 not include model score, probability, or per-cell output columns.
 
-Reviewed CRC patient-level probability rows are published separately under
+Reviewed CRC patient-level rank-score rows are published separately under
 `patient-level-bench/model_scores/crc_moa_tailored_20260525/`.

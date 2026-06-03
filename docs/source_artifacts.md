@@ -9,7 +9,7 @@ This repo was extracted from the internal `spatial-fun` monorepo.
 | BioBench v3 | `production/biobench_v3` | manifests, ligand modules, row indexes, summaries, README |
 | BioBench v2 legacy | `production/biobench_v2` | older clean and audit-inclusive row manifests, ligand modules, summary |
 | Cohort benchmark v2 | `production/full_benchmark/cohort_benchmark_v2` | README, manifest, policy, aggregate metrics, compact clinical-row manifests, reviewed v13.1b 63-row score tables, compact audits |
-| Patient benchmark | `production/full_benchmark/patient_level` | policies, aggregate metrics, compact clinical-row manifests, reviewed CRC patient probability table |
+| Patient benchmark | `production/full_benchmark/patient_level` | policies, aggregate metrics, compact clinical-row manifests, reviewed CRC patient rank-score table |
 | Atlas ORR baseline | `atlas/results/ctgov_phase2_solid_tumor_atlas_cohorts_pubmed_supplement.csv` | code and methodology for exact-drug-excluded ORR priors; raw atlas remains external |
 | Atlas CTGov ORR audit | ClinicalTrials.gov v2 API study JSON | checked-in support-row audit CSVs with ClinicalTrials.gov citations; raw API cache remains external/ignored |
 | DepMap ORR baseline | `data/depmap/Model.csv`, `data/depmap/drug/*AUCMatrix.csv`, `data/depmap/drug/*CollapsedConditions.csv` | code and methodology for GDSC/PRISM drug-sensitivity baselines; raw matrices remain external |
@@ -21,7 +21,7 @@ This repo was extracted from the internal `spatial-fun` monorepo.
 - Generated figures and PDFs.
 - Broad experiment folders and one-off analysis scripts.
 - Full patient-level model-score rows outside the reviewed compact CRC
-  probability table checked into `patient-level-bench/model_scores/`.
+  rank-score table checked into `patient-level-bench/model_scores/`.
 - Full cohort-level prediction/probability rows outside the reviewed 63-row
   model-score tables checked into `cohort-level-bench/model_scores/v13_1b/`.
 - The full working `atlas/` directory. It is large and contains curation/intermediate artifacts; keep it as an external source artifact.
@@ -79,7 +79,7 @@ CRC patient benchmark:
 - `production/full_benchmark/patient_level/crc_patient_moa_tailored_calibrated_response_distribution_metrics_20260525.csv`
 - `production/full_benchmark/patient_level/crc_patient_moa_tailored_calibrated_response_distribution_scores_20260525.csv`
   as the source for compact checked-in CRC regimen/outcome rows and the
-  reviewed CRC patient probability table
+  reviewed CRC patient rank-score table
 - `production/full_benchmark/patient_level/crc_moa_delta_risk_probability_summary_20260516.csv`
 
 Atlas ORR baseline:

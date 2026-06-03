@@ -61,6 +61,6 @@ with Pearson `0.646` and Spearman `0.519`. These are label-aware leaderboard
 summaries across precomputed sidecars, not the active/default release score.
 The softmin sidecar is the cohort-level mean of per-patient
 `min(final axis support values)` probabilities; see
-`docs/universal_softmin_crc_patient_probability.md`.
+`docs/universal_softmin_crc_patient_rank_score.md`.
 The full 190-column production prediction table and 1,078-row patient
 probability table are intentionally not included.

@@ -1,7 +1,7 @@
-# Universal Softmin And CRC Patient Probability
+# Universal Softmin And CRC Patient Rank Score
 
-This note documents two related response-probability scores included in the
-public benchmark artifacts.
+This note documents the relationship between the cohort universal softmin
+sidecar and the public CRC patient-level calibrated rank score.
 
 Short answer: they use the same soft-min response-gate idea, but they are not
 the same calculation.
@@ -46,9 +46,9 @@ Released 63-row metric:
 - Spearman: `0.5187919517683375`
 - AUC above disease median: `0.7753549695740365`
 
-## CRC Patient Probability
+## CRC Patient Rank Score
 
-The CRC patient-level probability is included in
+The CRC patient-level rank score is included in
 `patient-level-bench/model_scores/crc_moa_tailored_20260525/`.
 
 It starts from five broad module support values:
@@ -67,25 +67,13 @@ mean_support = mean(module supports)
 p10_support = 10th percentile(module supports)
 ```
 
-The raw transfer probability uses the same soft-min gate family:
-
-```text
-response_probability_uncalibrated =
-  min(
-    sigmoid(coverage, center=0.90, scale=0.05),
-    sigmoid(mean_support, center=0.0, scale=0.015),
-    sigmoid(p10_support, center=-0.02, scale=0.015)
-  )
-```
-
-The public default CRC patient probability is
-`response_probability_module_calibrated`. It uses a label-free coverage rescale
-because the CRC patient adapter has only five module supports:
+The rank source intermediate uses a label-free coverage rescale because the CRC
+patient adapter has only five module supports:
 
 ```text
 effective_coverage = min(1, coverage / 0.80)
 
-response_probability_module_calibrated =
+module_calibrated_intermediate =
   min(
     sigmoid(effective_coverage, center=0.90, scale=0.05),
     sigmoid(mean_support, center=0.0, scale=0.015),
@@ -93,16 +81,30 @@ response_probability_module_calibrated =
   )
 ```
 
-This default probability does not use patient labels, observed ORR calibration,
-z-scores, or a drug prior for probability assignment. Label-aware isotonic
-apparent calibration columns from the source artifact are intentionally excluded
-from the public probability table.
+The public default score is the within-panel rank of that intermediate:
 
-Released 11-row CRC metric for `response_probability_module_calibrated`:
+```text
+response_score_rank_calibrated =
+  rank(module_calibrated_intermediate within the 11-patient CRC panel) / 11
+```
+
+The fixed classifier is:
+
+```text
+predicted responder = response_score_rank_calibrated >= 0.5
+```
+
+This default score does not use patient labels, observed ORR calibration,
+z-scores, or a drug prior to assign rank scores. It is panel-relative, not an
+absolute response probability. Non-default raw/probability score columns and
+label-aware isotonic apparent calibration columns from the source artifact are
+intentionally excluded from the public rank-score table.
+
+Released 11-row CRC metric for `response_score_rank_calibrated`:
 
 - AUC response high: `0.8`
-- fixed 0.5 balanced accuracy: `0.6166666666666667`
-- predicted responders at 0.5: `3`
+- fixed 0.5 balanced accuracy: `0.7333333333333334`
+- predicted responders at 0.5: `6`
 - responders/non-responders: `5` / `6`
 
 ## Relationship
@@ -110,5 +112,5 @@ Released 11-row CRC metric for `response_probability_module_calibrated`:
 `universal_axis_softmin_response_probability_mean` is a cohort-level mean of
 patient universal-axis softmin probabilities. It uses the same broad "all
 response gates must pass" soft-min principle as the CRC MOA-tailored patient
-module score, but it is not identical to the CRC calibrated patient-level score
-and not the warning-pressure patient-level score.
+module score, but it is not identical to the CRC patient rank score and not the
+warning-pressure patient-level score.

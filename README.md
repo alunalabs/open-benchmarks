@@ -70,17 +70,19 @@ exclude model score, probability, and per-cell output columns.
 
 Public CRC patient model score artifacts:
 
-- `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_probabilities_20260525.csv`:
-  11 CRC patient rows with broad module supports, the raw transfer probability,
-  and the default module-calibrated response probability.
+- `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_rank_scores_20260525.csv`:
+  11 CRC patient rows with broad module supports and the default calibrated
+  rank score.
 - `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_metrics_20260525.csv`:
-  label-free metrics for the raw and module-calibrated probabilities.
+  label-free metrics for the default calibrated rank score.
 
-The CRC default probability is `response_probability_module_calibrated`. It
-summarizes KRAS/MAPK, EGFR, cytostasis, escape-control, and kill-conversion
-module supports into coverage, mean support, and p10 support, then applies a
-soft-min over sigmoid gates. See
-`docs/universal_softmin_crc_patient_probability.md`.
+The CRC default score is `response_score_rank_calibrated`, with AUC response
+high `0.800` and fixed 0.5 balanced accuracy `0.733`. It summarizes KRAS/MAPK,
+EGFR, cytostasis, escape-control, and kill-conversion module supports into a
+label-free soft-min response intermediate, then converts that intermediate into
+a within-panel rank score. It is a benchmark rank score, not an absolute
+response probability. See
+`docs/universal_softmin_crc_patient_rank_score.md`.
 
 ## Cohort-Level Bench
 
@@ -143,7 +145,7 @@ Calculation note: `universal_axis_softmin_response_probability_mean` is the
 cohort-level mean of per-patient `universal_axis_softmin_response_probability`,
 where each patient score is `min(final axis support values)`. It uses the same
 soft-min response-gate idea as the CRC patient module score, but it is not the
-same calculation. See `docs/universal_softmin_crc_patient_probability.md`.
+same calculation. See `docs/universal_softmin_crc_patient_rank_score.md`.
 
 ## Cohort-Level Baselines
 

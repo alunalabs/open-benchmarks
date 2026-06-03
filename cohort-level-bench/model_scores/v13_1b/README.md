@@ -73,7 +73,7 @@ The final axis support values are coverage, response-conversion,
 resistant-tail/refuge, and sometimes MOA/context engagement control. This uses
 the same soft-min response-gate idea as the CRC patient module probability, but
 it is not the same calculation. See
-`docs/universal_softmin_crc_patient_probability.md`.
+`docs/universal_softmin_crc_patient_rank_score.md`.
 
 The best packaged 63-row Spearman sidecar is
 `universal_axis_geomean_response_probability_mean`:
