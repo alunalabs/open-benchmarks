@@ -3,9 +3,8 @@
 Open benchmark code and release summaries for the Gaia oncology benchmark suite
 described in the [AlunaData blog](https://blog.alunadata.com/).
 
-The suite has three layers:
+The current release has two layers:
 
-- **BioBench**: spatial tissue-biology perturbation checks.
 - **Patient-level bench**: pretreatment patient-section response prediction.
 - **Cohort-level bench**: trial-arm or drug-by-disease ORR prediction.
 
@@ -13,40 +12,6 @@ This repository contains benchmark loaders, scoring utilities, baseline scripts,
 and small result summaries. It intentionally does not commit raw spatial data,
 model checkpoints, per-cell caches, full row-level prediction tables, or large
 external source matrices.
-
-## Gaia Model Overview
-
-<p align="center">
-  <img src="docs/figures/blog-gaia-architecture.png" alt="Gaia architecture diagram" width="820">
-</p>
-
-## BioBench
-
-BioBench tests whether a spatial model moves known tissue biology in the right
-direction. A row is a falsifiable biology statement: edit a sender program in
-silico, roll the spatial model forward over the local neighborhood, and check
-whether a receiver pathway or readout moves in the curated direction.
-
-The blog describes two BioBench row families:
-
-- **Ligand-receptor pathway rows**: a sender ligand family should move a
-  receptor-positive receiver pathway.
-- **Regional tissue-program rows**: broader tissue programs, such as CAF/ECM,
-  hypoxia, vascular niche, cytotoxic immune, or checkpoint-contact programs,
-  should move downstream tissue readouts.
-
-Release utilities:
-
-- `src/spatial_benchmarks/biobench_v3.py`
-- `open-benchmarks biobench-v3-summary --root artifacts/biobench_v3`
-
-Public row artifacts:
-
-- `biobench/legacy_v2/biobench_v2_manifest_clean.csv`: older BioBench v2
-  clean row set, 630 rows.
-- `biobench/legacy_v2/biobench_v2_manifest_unfiltered.csv`: older BioBench v2
-  audit-inclusive row set, 805 rows.
-- `biobench/legacy_v2/biobench_v2_ligand_modules.csv`: 23 v2 ligand modules.
 
 ## Patient-Level Bench
 
@@ -216,14 +181,6 @@ The package uses only the Python standard library at runtime. Development
 checks use `pytest` and `ruff`.
 
 ## CLI Examples
-
-Summarize an exported BioBench v3 snapshot:
-
-```bash
-open-benchmarks biobench-v3-summary \
-  --root artifacts/biobench_v3 \
-  --surface curated
-```
 
 Recompute cohort benchmark v2 metrics:
 

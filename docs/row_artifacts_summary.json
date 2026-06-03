@@ -1,9 +1,4 @@
 {
-  "biobench_legacy_v2": {
-    "clean_rows": 630,
-    "ligand_modules": 23,
-    "unfiltered_rows": 805
-  },
   "cohort_level": {
     "cohort_benchmark_v2_clinical_rows": 69,
     "cohort_benchmark_v2_eval_clinical_rows": 63,

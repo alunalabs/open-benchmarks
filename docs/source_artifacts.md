@@ -6,8 +6,6 @@ This repo was extracted from the internal `spatial-fun` monorepo.
 
 | Layer | Source surface | Intended public contents |
 | --- | --- | --- |
-| BioBench v3 | `production/biobench_v3` | manifests, ligand modules, row indexes, summaries, README |
-| BioBench v2 legacy | `production/biobench_v2` | older clean and audit-inclusive row manifests, ligand modules, summary |
 | Cohort benchmark v2 | `production/full_benchmark/cohort_benchmark_v2` | README, manifest, policy, aggregate metrics, compact clinical-row manifests, reviewed Gaia 63-row score tables, compact audits |
 | Patient benchmark | `production/full_benchmark/patient_level` | policies, aggregate metrics, compact clinical-row manifests, reviewed CRC patient rank-score table |
 | Atlas ORR baseline | `atlas/results/ctgov_phase2_solid_tumor_atlas_cohorts_pubmed_supplement.csv` | code and methodology for exact-drug-excluded ORR priors; raw atlas remains external |
@@ -38,21 +36,6 @@ publication. If published, use a separate data release with a clear data
 license and stable checksums.
 
 ## Canonical Source Files
-
-BioBench v3:
-
-- `production/biobench_v3/README.md`
-- `production/biobench_v3/biobench_v3_curated_manifest.csv`
-- `production/biobench_v3/biobench_v3_curated_ligand_modules.csv`
-- `production/biobench_v3/biobench_v3_curated_all_rows_index.csv`
-- `production/biobench_v3/biobench_v3_curated_summary.json`
-
-BioBench v2 legacy:
-
-- `production/biobench_v2/biobench_v2_manifest_clean.csv`
-- `production/biobench_v2/biobench_v2_manifest_unfiltered.csv`
-- `production/biobench_v2/biobench_v2_ligand_modules.csv`
-- `production/biobench_v2/biobench_v2_summary.json`
 
 Cohort benchmark v2:
 

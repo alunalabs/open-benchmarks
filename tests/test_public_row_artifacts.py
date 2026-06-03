@@ -17,8 +17,6 @@ def read_csv(path: str) -> list[dict[str, str]]:
 def test_public_row_artifact_counts() -> None:
     summary = json.loads((ROOT / "docs/row_artifacts_summary.json").read_text())
 
-    assert summary["biobench_legacy_v2"]["clean_rows"] == 630
-    assert summary["biobench_legacy_v2"]["unfiltered_rows"] == 805
     assert summary["patient_level"]["universal_patient_response_axes_clinical_rows"] == 23
     assert summary["patient_level"]["crc_patient_clinical_rows"] == 11
     assert summary["patient_level"]["crc_moa_tailored_rank_score_rows"] == 11

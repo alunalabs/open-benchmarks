@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any
 
 from .atlas_orr import (
     STRICT_RELEASE_EXCLUDED_ATLAS_ROW_INDICES,
@@ -15,7 +14,6 @@ from .atlas_orr import (
     write_atlas_orr_outputs,
 )
 from .atlas_ctgov_audit import audit_atlas_ctgov_support, write_atlas_ctgov_audit_outputs
-from .biobench_v3 import BiobenchV3Surface
 from .cohort_v2 import CohortBenchmarkV2, summarize_predictions
 from .depmap_orr import calculate_depmap_orr_baseline, write_depmap_orr_outputs
 from .export import export_public_bundle
@@ -26,17 +24,6 @@ from .patient_crc import patient_metrics
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="open-benchmarks")
     subparsers = parser.add_subparsers(dest="command", required=True)
-
-    biobench = subparsers.add_parser(
-        "biobench-v3-summary",
-        help="Summarize a BioBench v3 artifact directory.",
-    )
-    biobench.add_argument("--root", required=True, type=Path)
-    biobench.add_argument(
-        "--surface",
-        default="curated",
-        choices=["raw", "headline", "added_directional", "curated"],
-    )
 
     cohort = subparsers.add_parser(
         "cohort-v2-metrics",
@@ -132,9 +119,7 @@ def main(argv: list[str] | None = None) -> int:
     export.add_argument("--include-row-results", action="store_true")
 
     args = parser.parse_args(argv)
-    if args.command == "biobench-v3-summary":
-        result: Any = BiobenchV3Surface.from_directory(args.root, surface=args.surface).counts()
-    elif args.command == "cohort-v2-metrics":
+    if args.command == "cohort-v2-metrics":
         benchmark = CohortBenchmarkV2.from_directory(args.root, load_predictions=True)
         result = summarize_predictions(
             benchmark.predictions,

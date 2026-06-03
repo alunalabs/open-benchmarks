@@ -10,27 +10,6 @@ from typing import Any
 from .io import read_csv_rows, read_json, sha256_file, write_csv_rows, write_json
 from .patient_crc import filter_crc_rows
 
-
-BIOBENCH_FILES = (
-    "README.md",
-    "biobench_v3_curated_manifest.csv",
-    "biobench_v3_curated_ligand_modules.csv",
-    "biobench_v3_curated_all_rows_index.csv",
-    "biobench_v3_curated_summary.json",
-    "biobench_v3_headline_manifest.csv",
-    "biobench_v3_headline_ligand_modules.csv",
-    "biobench_v3_added_directional_candidates_manifest.csv",
-    "biobench_v3_added_directional_candidates_ligand_modules.csv",
-)
-
-BIOBENCH_V2_FILES = (
-    "README.md",
-    "biobench_v2_ligand_modules.csv",
-    "biobench_v2_manifest_clean.csv",
-    "biobench_v2_manifest_unfiltered.csv",
-    "biobench_v2_summary.json",
-)
-
 COHORT_SAFE_FILES = (
     "README.md",
     "manifest.json",
@@ -146,20 +125,6 @@ def export_public_bundle(
         ],
     }
 
-    export_group(
-        source / "production/biobench_v3",
-        output / "biobench_v3",
-        BIOBENCH_FILES,
-        manifest=manifest,
-        group="biobench_v3",
-    )
-    export_group(
-        source / "production/biobench_v2",
-        output / "biobench_legacy_v2",
-        BIOBENCH_V2_FILES,
-        manifest=manifest,
-        group="biobench_legacy_v2",
-    )
     cohort_files = [*COHORT_SAFE_FILES, *(COHORT_ROW_RESULT_FILES if include_row_results else ())]
     export_group(
         source / "production/full_benchmark/cohort_benchmark_v2",
