@@ -14,28 +14,11 @@ and small result summaries. It intentionally does not commit raw spatial data,
 model checkpoints, per-cell caches, full row-level prediction tables, or large
 external source matrices.
 
-## Figures
-
-Selected figures from the [Gaia blog](https://blog.alunadata.com/) are included
-here as local README assets. They are exported from the raw Terra blog chart
-components in
-`/Users/davidchu/Desktop/projects/spatial-fun/deploy/terra-demo-standalone/src/components/`
-as PNGs with the Terra blog fonts baked in.
+## Gaia Model Overview
 
 <p align="center">
   <img src="docs/figures/blog-gaia-architecture.png" alt="Gaia architecture diagram" width="820">
 </p>
-
-<p align="center">
-  <img src="docs/figures/blog-presponse-flow.png" alt="How per-cell probabilities become p_response" width="820">
-</p>
-
-<p align="center">
-  <img src="docs/figures/blog-cohort-orr.png" alt="Observed vs predicted ORR" width="520">
-</p>
-
-The cohort ORR figure is the blog display. The packaged cohort benchmark
-artifacts below are the 63-row production v2 release.
 
 ## BioBench
 
@@ -75,6 +58,10 @@ EGFR-axis regimens.
 The key design choice is label-free scoring: response probability is assembled
 from interpretable predicted biology, such as tumor apoptosis, growth arrest,
 escape, and mechanism-specific axes. It is not fit to the response labels.
+
+<p align="center">
+  <img src="docs/figures/blog-presponse-flow.png" alt="How per-cell probabilities become p_response" width="820">
+</p>
 
 Release utilities:
 
@@ -118,15 +105,19 @@ diseases. It is noisier than matched patient response, but it tests whether
 spatial rollout scores recover clinically meaningful response differences
 without training on observed ORR.
 
+<p align="center">
+  <img src="docs/figures/blog-cohort-orr.png" alt="Observed vs predicted ORR" width="520">
+</p>
+
 Release utilities:
 
 - `src/spatial_benchmarks/cohort_v2.py`
 - `open-benchmarks cohort-v2-metrics --root artifacts/cohort_benchmark_v2`
 - `cohort-level-bench/`
 
-The blog reports the strict public cohort-level display on 44 ORR pairs. The
-baseline scripts in this repo target the 63 ORR-scored production v2 rows used
-for the Atlas and DepMap baseline analysis.
+The cohort ORR figure visualizes the cohort-level prediction task. The baseline
+scripts in this repo target the 63 ORR-scored production v2 rows used for the
+Atlas and DepMap baseline analysis.
 
 Public clinical row artifacts:
 
