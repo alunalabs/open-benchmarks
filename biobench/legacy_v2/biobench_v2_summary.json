@@ -1,0 +1,37 @@
+{
+  "clean_manual_review_rows": 0,
+  "clean_modules": [
+    "canonical_wnt_ligands",
+    "egfr_ligands",
+    "il10_immune",
+    "il20_24_epithelial_stromal",
+    "il22_epithelial",
+    "il2_common_gamma_chain",
+    "il31_osmr_ligand",
+    "il6_gp130_family",
+    "lymphotoxin_light_ltbr_hvem",
+    "neuregulin_erbb_ligands",
+    "tgfb_ligands",
+    "tnf_lta_tnfr1_2",
+    "type_i_interferons",
+    "type_ii_interferon",
+    "type_iii_interferons",
+    "vegfa_vegfr2_axis",
+    "vegfb_pgf_vegfr1_axis",
+    "vegfc_vegfd_vegfr3_axis"
+  ],
+  "clean_rows": 630,
+  "clean_source_manual_review_rows": 281,
+  "module_count": 23,
+  "review_only_modules": [
+    "context_dependent_wnt_ligands",
+    "fas_death_receptor",
+    "il26_context_specific",
+    "noncanonical_wnt_ligands",
+    "trail_death_receptor"
+  ],
+  "source_manifest": "biobench/data/ligand_module_pathway_v4_unfiltered_manifest.csv",
+  "source_rows": 350,
+  "unfiltered_manual_review_rows": 175,
+  "unfiltered_rows": 805
+}

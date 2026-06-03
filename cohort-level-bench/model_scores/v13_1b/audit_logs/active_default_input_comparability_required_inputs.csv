@@ -1,0 +1,5 @@
+input,nonnull,missing,mean,min,max
+coverage_support,1078,0,0.4852867896160803,0.0,1.0
+apoptosis_step4_pred_fraction,1078,0,0.1584616332366569,0.0,0.5205724508050089
+resistant_tail_control,1078,0,0.5595450581022913,0.0,1.0
+apoptosis_prevalence_no_prior_score,1078,0,0.06795417749440949,0.0,0.5076266880994398

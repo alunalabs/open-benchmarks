@@ -1,0 +1,64 @@
+surface_pair_id,cohort,drug,drug_norm,moa_component,observed_orr_pct,support_rows,support_ncts,min_support_row_orr_pct,max_support_row_orr_pct,exclude_in_strict_orr_sensitivity_rows,optional_unconfirmed_response_rows,reviewed_keep_rows,strict_release_support_rows,strict_release_support_ncts
+breast::bortezomib,breast,Bortezomib,bortezomib,proteasome,0.0,161,95,0.0,96.4286,1,1,3,160,94
+breast::docetaxel,breast,Docetaxel,docetaxel,taxane,47.8,31,23,0.0,66.6667,1,0,1,30,22
+breast::doxorubicin,breast,Doxorubicin (hydrochloride),doxorubicin,topo2_anthracycline,33.3,32,24,0.0,67.0,1,0,1,31,23
+breast::erlotinib,breast,Erlotinib,erlotinib,egfr_her2_mapk,2.9999999999999996,160,94,0.0,96.4286,1,1,3,159,93
+breast::gefitinib,breast,Gefitinib,gefitinib,egfr_her2_mapk,1.7,157,93,0.0,96.4286,1,1,3,156,92
+breast::gemcitabine,breast,Gemcitabine,gemcitabine,gemcitabine_nucleoside,20.2314606741573,30,22,0.0,67.0,0,0,1,30,22
+breast::paclitaxel,breast,Paclitaxel,paclitaxel,taxane,25.0,29,21,0.0,67.0,1,0,1,28,20
+breast::sunitinib,breast,Sunitinib,sunitinib,vegf_multikinase,10.59190031152648,140,83,0.0,96.4286,0,1,3,140,83
+crc::bortezomib,crc,Bortezomib,bortezomib,proteasome,0.0,161,95,0.0,96.4286,1,1,3,160,94
+crc::cabozantinib,crc,Cabozantinib (S-malate),cabozantinib,vegf_multikinase,2.5,160,94,0.0,96.4286,1,1,3,159,93
+crc::fluorouracil,crc,5-Fluorouracil,fluorouracil,fluoropyrimidine_tyms,17.3,29,21,0.0,66.6667,1,0,1,28,20
+crc::gefitinib,crc,Gefitinib,gefitinib,egfr_her2_mapk,1.0000000000000002,157,93,0.0,96.4286,1,1,3,156,92
+crc::irinotecan,crc,Irinotecan,irinotecan,topo1,7.0,32,24,0.0,67.0,1,0,1,31,23
+crc::oxaliplatin,crc,Oxaliplatin,oxaliplatin,platinum_dna_damage,1.2820512820512822,32,24,0.0,67.0,1,0,1,31,23
+crc::pemetrexed,crc,Pemetrexed,pemetrexed,antifolate_tyms,0.0,31,23,0.0,67.0,1,0,1,30,22
+crc::raltitrexed,crc,Raltitrexed,raltitrexed,antifolate_tyms,11.11111111111111,32,24,0.0,67.0,1,0,1,31,23
+crc::regorafenib,crc,Regorafenib,regorafenib,vegf_multikinase,1.0,159,94,0.0,96.4286,1,1,3,158,93
+crc::sunitinib,crc,Sunitinib,sunitinib,vegf_multikinase,1.1904761904761905,140,83,0.0,96.4286,0,1,3,140,83
+gastric::erlotinib,gastric,Erlotinib,erlotinib,egfr_her2_mapk,9.0,160,94,0.0,96.4286,1,1,3,159,93
+gastric::everolimus,gastric,Everolimus,everolimus,other,4.0,149,88,0.0,96.4286,1,1,3,148,87
+gastric::irinotecan,gastric,Irinotecan,irinotecan,topo1,17.0,32,24,0.0,67.0,1,0,1,31,23
+gastric::lapatinib,gastric,Lapatinib ditosylate,lapatinib,egfr_her2_mapk,5.0,157,93,0.0,96.4286,1,1,3,156,92
+gastric::pemetrexed,gastric,Pemetrexed,pemetrexed,antifolate_tyms,13.3,31,23,0.0,67.0,1,0,1,30,22
+gastric::regorafenib,gastric,Regorafenib,regorafenib,vegf_multikinase,3.0,159,94,0.0,96.4286,1,1,3,158,93
+gastric::sunitinib,gastric,Sunitinib,sunitinib,vegf_multikinase,3.9,140,83,0.0,96.4286,0,1,3,140,83
+hnscc::methotrexate,hnscc,Methotrexate,methotrexate,other,6.462882096069869,32,24,0.0,67.0,1,0,1,31,23
+nsclc::afatinib,nsclc,Afatinib,afatinib,other,0.0,161,95,0.0,96.4286,1,1,3,160,94
+nsclc::bortezomib,nsclc,Bortezomib,bortezomib,proteasome,5.0,161,95,0.0,96.4286,1,1,3,160,94
+nsclc::docetaxel,nsclc,Docetaxel,docetaxel,taxane,13.314942528735632,31,23,0.0,66.6667,1,0,1,30,22
+nsclc::epirubicin,nsclc,Epirubicin (hydrochloride),epirubicin,topo2_anthracycline,36.0,32,24,0.0,67.0,1,0,1,31,23
+nsclc::erlotinib,nsclc,Erlotinib,erlotinib,egfr_her2_mapk,11.009314975583289,160,94,0.0,96.4286,1,1,3,159,93
+nsclc::gefitinib,nsclc,Gefitinib,gefitinib,egfr_her2_mapk,39.233817701453106,157,93,0.0,96.4286,1,1,3,156,92
+nsclc::gemcitabine,nsclc,Gemcitabine,gemcitabine,gemcitabine_nucleoside,0.0,30,22,0.0,67.0,0,0,1,30,22
+nsclc::idarubicin,nsclc,Idarubicin (hydrochloride),idarubicin,topo2_anthracycline,0.0,32,24,0.0,67.0,1,0,1,31,23
+nsclc::irinotecan,nsclc,Irinotecan,irinotecan,topo1,21.428571428571427,32,24,0.0,67.0,1,0,1,31,23
+nsclc::lapatinib,nsclc,Lapatinib ditosylate,lapatinib,egfr_her2_mapk,1.3,157,93,0.0,96.4286,1,1,3,156,92
+nsclc::mitoxantrone,nsclc,Mitoxantrone (dihydrochloride),mitoxantrone,topo2_anthracycline,0.0,32,24,0.0,67.0,1,0,1,31,23
+nsclc::paclitaxel,nsclc,Paclitaxel,paclitaxel,taxane,34.2,29,21,0.0,67.0,1,0,1,28,20
+nsclc::pemetrexed,nsclc,Pemetrexed,pemetrexed,antifolate_tyms,10.256410256410255,31,23,0.0,67.0,1,0,1,30,22
+nsclc::vandetanib,nsclc,Vandetanib,vandetanib,vegf_multikinase,9.054726368159203,159,93,0.0,75.0,1,0,3,158,92
+nsclc::volasertib,nsclc,Volasertib,volasertib,plk1_mitotic,8.1,159,93,0.0,96.4286,1,1,3,158,92
+ovarian::altretamine,ovarian,Altretamine,altretamine,alkylator_low_specificity,45.6140350877193,32,24,0.0,67.0,1,0,1,31,23
+ovarian::bortezomib,ovarian,Bortezomib,bortezomib,proteasome,3.8461538461538463,161,95,0.0,96.4286,1,1,3,160,94
+ovarian::docetaxel,ovarian,Docetaxel,docetaxel,taxane,34.78260869565217,31,23,0.0,66.6667,1,0,1,30,22
+ovarian::gemcitabine,ovarian,Gemcitabine,gemcitabine,gemcitabine_nucleoside,11.11111111111111,30,22,0.0,67.0,0,0,1,30,22
+ovarian::mifepristone,ovarian,Mifepristone,mifepristone,other,4.5,16,12,0.0,60.5263,0,1,0,16,12
+ovarian::paclitaxel,ovarian,Paclitaxel,paclitaxel,taxane,30.0,29,21,0.0,67.0,1,0,1,28,20
+ovarian::pemetrexed,ovarian,Pemetrexed,pemetrexed,antifolate_tyms,20.833333333333332,31,23,0.0,67.0,1,0,1,30,22
+ovarian::sunitinib,ovarian,Sunitinib,sunitinib,vegf_multikinase,8.3,140,83,0.0,96.4286,0,1,3,140,83
+ovarian::temsirolimus,ovarian,Temsirolimus,temsirolimus,mtor_transcript_safe,9.25925925925926,161,95,0.0,96.4286,1,1,3,160,94
+ovarian::topotecan,ovarian,Topotecan (hydrochloride),topotecan,topo1,26.666666666666668,26,22,0.0,67.0,1,0,1,25,21
+pdac::abemaciclib,pdac,Abemaciclib,abemaciclib,other,3.0,161,95,0.0,96.4286,1,1,3,160,94
+pdac::erlotinib,pdac,Erlotinib,erlotinib,egfr_her2_mapk,1.0,160,94,0.0,96.4286,1,1,3,159,93
+pdac::fluorouracil,pdac,5-Fluorouracil,fluorouracil,fluoropyrimidine_tyms,0.0,29,21,0.0,66.6667,1,0,1,28,20
+pdac::gemcitabine,pdac,Gemcitabine,gemcitabine,gemcitabine_nucleoside,6.873661670235546,30,22,0.0,67.0,0,0,1,30,22
+pdac::sunitinib,pdac,Sunitinib,sunitinib,vegf_multikinase,1.351351351351351,140,83,0.0,96.4286,0,1,3,140,83
+prostate::mitoxantrone,prostate,Mitoxantrone (dihydrochloride),mitoxantrone,topo2_anthracycline,3.8,32,24,0.0,67.0,1,0,1,31,23
+rcc::belzutifan,rcc,Belzutifan,belzutifan,other,22.1070796460177,161,95,0.0,96.4286,1,1,3,160,94
+rcc::cabozantinib,rcc,Cabozantinib (S-malate),cabozantinib,vegf_multikinase,17.0,160,94,0.0,96.4286,1,1,3,159,93
+rcc::everolimus,rcc,Everolimus,everolimus,other,4.458415841584158,149,88,0.0,96.4286,1,1,3,148,87
+rcc::regorafenib,rcc,Regorafenib,regorafenib,vegf_multikinase,31.3,159,94,0.0,96.4286,1,1,3,158,93
+rcc::sunitinib,rcc,Sunitinib,sunitinib,vegf_multikinase,47.0,140,83,0.0,96.4286,0,1,3,140,83
+rcc::temsirolimus,rcc,Temsirolimus,temsirolimus,mtor_transcript_safe,8.6,161,95,0.0,96.4286,1,1,3,160,94

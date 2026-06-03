@@ -1,0 +1,57 @@
+{
+  "atlas_rows_after_real_therapy_filter": 9638,
+  "atlas_rows_raw_after_removal": 21022,
+  "baseline_id": "cohort_level_atlas_orr_strict_release",
+  "benchmark_surface": "cohort_benchmark_v2",
+  "cleaning_rule": "Use the unfiltered raw Atlas source and remove 13 reviewed raw Atlas row indices: 3 CTGov value mismatches, 8 no-matching-ORR rows, and 2 CTGov-verified endpoint caveats that are not strict CR/PR ORR. Then recompute the fixed k=8 prior.",
+  "ctgov_verified_support_rows_before_endpoint_review": 191,
+  "excluded_raw_atlas_row_indices": [
+    582,
+    1519,
+    2448,
+    2568,
+    3862,
+    4782,
+    9268,
+    10228,
+    11729,
+    12033,
+    14965,
+    14966,
+    17451
+  ],
+  "lodo_note": "Leave-disease-out k tuning uses labels only in non-held-out diseases to select k; held-out disease labels are never used for that disease. It is reported as an overfit sensitivity check, not the release primary baseline.",
+  "lodo_spearman_sensitivity": {
+    "auc_above_disease_median": 0.6962474645030426,
+    "mae_orr_pct": 12.571540827002169,
+    "pearson": 0.2922530219385001,
+    "rmse_orr_pct": 14.869602960501858,
+    "spearman": 0.41904800475244997
+  },
+  "method": "Exact-drug-excluded Atlas disease x therapy-family support-shrunk prior. The primary fixed k=8 score is not tuned on target labels.",
+  "optional_unconfirmed_orr_excluded_from_primary": false,
+  "optional_unconfirmed_orr_row_indices": [
+    7251
+  ],
+  "primary_metrics": {
+    "auc_above_disease_median": 0.742393509127789,
+    "mae_orr_pct": 11.585763458480809,
+    "mean_observed_orr": 12.317005419577614,
+    "mean_prediction": 17.657457610636836,
+    "pearson": 0.40930170068419885,
+    "rmse_orr_pct": 13.19321892673628,
+    "spearman": 0.46404726822364617,
+    "within_disease_pair_pearson": 0.36574325599321444,
+    "within_disease_pair_spearman": 0.30710941269242326,
+    "within_disease_pairs": 269
+  },
+  "primary_score_col": "atlas_mono_disease_therapy_shrink_k8",
+  "remaining_audited_support_rows": 189,
+  "removed_status_counts": {
+    "ctgov_no_matching_orr_measurement": 8,
+    "ctgov_value_mismatch": 3,
+    "ctgov_verified_non_strict_orr_endpoint": 2
+  },
+  "removed_support_rows": 13,
+  "target_rows": 63
+}

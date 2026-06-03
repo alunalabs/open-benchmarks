@@ -1,0 +1,18 @@
+{
+  "README.md": {
+    "bytes": 2183,
+    "sha256": "2815aed7a90d0882c9a6769280257ecdc1d06ae81d9a007c1b7195259dd3e296"
+  },
+  "crc_patient_moa_tailored_metrics_20260525.csv": {
+    "bytes": 1039,
+    "sha256": "621021d79513ab5c801bd796cd85a748c7913574947d50f175e3794e6b3bf093"
+  },
+  "crc_patient_moa_tailored_probabilities_20260525.csv": {
+    "bytes": 4216,
+    "sha256": "9eb87808c2bdd6ce66c61447bf2525ecaa9d673869a3de2a9262cb386414ed58"
+  },
+  "crc_patient_moa_tailored_summary.json": {
+    "bytes": 3249,
+    "sha256": "7c6e8d1d3e2f711eeacf8f00394c24ca1662ce341e7110616e8e1f48de117387"
+  }
+}

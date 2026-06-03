@@ -1,0 +1,70 @@
+{
+  "README.md": {
+    "bytes": 3490,
+    "sha256": "590d56deaf5e7538ae14fbc0261c5f777e062a8a6f27eb512e2cf9ae81085c86"
+  },
+  "audit_logs/README.md": {
+    "bytes": 1096,
+    "sha256": "7a10c4de669eab5fcf6ea82a543666137f9797cf056def20055f75fc8c9a9d2d"
+  },
+  "audit_logs/active_default_input_comparability_axis_policy_source.csv": {
+    "bytes": 2826,
+    "sha256": "e045a8e7093af9718ebfb4202a9fa8eb146adbf097a60980b668fc163dbc0736"
+  },
+  "audit_logs/active_default_input_comparability_moa_completeness.csv": {
+    "bytes": 738,
+    "sha256": "a4558d02ec7287b11438cff5e6ed8d3390edcd9d26e95a8a9f01f72058fc5f9d"
+  },
+  "audit_logs/active_default_input_comparability_nominal_sample_source_split_sanitized.csv": {
+    "bytes": 3730,
+    "sha256": "fa40108759207dc58d261bb1599dfbd96d23274556544dfb4992b8362a947ce1"
+  },
+  "audit_logs/active_default_input_comparability_prevalence_source.csv": {
+    "bytes": 17150,
+    "sha256": "5aa2f1bf90b890e7561d8bc9930438355b7d8c7661b77e946e30790ee5749525"
+  },
+  "audit_logs/active_default_input_comparability_report_excerpt.md": {
+    "bytes": 21423,
+    "sha256": "0c80a88ff677235f915fa2d95b7c00c9d7103fd25be772634d49563e0d7c41c2"
+  },
+  "audit_logs/active_default_input_comparability_required_inputs.csv": {
+    "bytes": 308,
+    "sha256": "41ed86bfd68f0a106d23f8465ee5768f9ac7e1eaebc0effadc692a86f1a3c010"
+  },
+  "audit_logs/gene_shuffle_summary.csv": {
+    "bytes": 1449,
+    "sha256": "2cb7321b2f82da2d3974bd909a215d182e4d2919fee4843bc91f52608da2b39f"
+  },
+  "audit_logs/hard_donor_summary.csv": {
+    "bytes": 3930,
+    "sha256": "601e7477cf372213d7a7a496f2330f940e6ff0f8f195de15e4cb1184efd38d72"
+  },
+  "audit_logs/susceptibility_report.md": {
+    "bytes": 4954,
+    "sha256": "ecb58680829ab1dc9536e5ba564a4be0e65c6c80927dda685924aa0b7a0a2fdc"
+  },
+  "v13_1b_63_model_scores.csv": {
+    "bytes": 34580,
+    "sha256": "0daf70007bcfa2c103c0e77bc93aae453a710cec536267be59eeff13d29d476d"
+  },
+  "v13_1b_best_63_model_scores.csv": {
+    "bytes": 24843,
+    "sha256": "c44c04d326732b92c1a772fe5c2466ea3419c88ef31d879152fd70e4126a5933"
+  },
+  "v13_1b_by_disease_metrics.csv": {
+    "bytes": 2813,
+    "sha256": "ce59fa316486f9cfbd4c9dc5b0a6febbab36f3ecb10b13e5c8de5efdcc68d016"
+  },
+  "v13_1b_metrics.csv": {
+    "bytes": 3143,
+    "sha256": "de96d3e7acb364f198054d798c5e77c6e9611ae8b7868a87302cd5259e4b5c59"
+  },
+  "v13_1b_model_score_summary.json": {
+    "bytes": 8045,
+    "sha256": "84700e6a7ab4d4e2dd74724abab616a9ac39107bd7f46895037119b555b9dabb"
+  },
+  "v13_1b_report.md": {
+    "bytes": 8637,
+    "sha256": "d9dbcced178dc446e408922025f282fbcbfaa98f6c3edea451c118b4d068969f"
+  }
+}

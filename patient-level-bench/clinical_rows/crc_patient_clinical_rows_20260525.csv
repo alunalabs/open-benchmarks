@@ -1,0 +1,12 @@
+source_sample_id,source_patient_id,regimen,clinical_outcome,observed_responder,observed_non_responder,moa_component,selected_variant,selection_source
+P1_Pre,P1,Sotorasib+panitumumab,Partial Response,1,0,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P2_Pre,P2,Adagrasib+cetuximab,Partial Response,1,0,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P3_Pre,P3,Adagrasib+cetuximab,Partial Response,1,0,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P4_Pre,P4,Sotorasib+panitumumab,Partial Response,1,0,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P5_Pre,P5,Sotorasib+panitumumab,Partial Response,1,0,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P6_Pre,P6,Sotorasib+panitumumab,Stable Disease,0,1,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P7_Pre,P7,Sotorasib+panitumumab,Stable Disease,0,1,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P9_Pre,P9,Adagrasib+cetuximab,Stable Disease,0,1,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P10_Pre,P10,Sotorasib+panitumumab,Stable Disease,0,1,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P11_Pre,P11,Sotorasib+panitumumab,Stable Disease,0,1,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component
+P12_Pre,P12,Sotorasib+panitumumab,Stable Disease,0,1,egfr_her2_mapk,softmin_cov09_mag0_tailm002,leave_disease_moa_component

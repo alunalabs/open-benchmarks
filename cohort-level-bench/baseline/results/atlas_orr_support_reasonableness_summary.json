@@ -1,0 +1,91 @@
+{
+  "all_support_rows_biomarker_unselected": true,
+  "all_support_rows_non_combination": true,
+  "ctgov_status": {
+    "ctgov_no_matching_orr_measurement": 8,
+    "ctgov_value_mismatch": 3,
+    "ctgov_verified_match": 191
+  },
+  "exact_drug_leakage_hits": 0,
+  "sensitivity_metrics": {
+    "cleaned_current": {
+      "auc_above_disease_median": 0.7439148073022313,
+      "mae_orr_pct": 11.695144927053443,
+      "pearson": 0.3968358119888828,
+      "removed_raw_rows": 11,
+      "rmse_orr_pct": 13.295018758085256,
+      "spearman": 0.44813224513651717
+    },
+    "exclude_obvious_non_orr": {
+      "additionally_removed_atlas_row_indices": [
+        4782,
+        11729
+      ],
+      "auc_above_disease_median": 0.742393509127789,
+      "mae_orr_pct": 11.585763458480809,
+      "pearson": 0.40930170068419885,
+      "removed_raw_rows": 13,
+      "rmse_orr_pct": 13.19321892673628,
+      "spearman": 0.46404726822364617
+    },
+    "exclude_obvious_non_orr_and_unconfirmed": {
+      "additionally_removed_atlas_row_indices": [
+        4782,
+        11729,
+        7251
+      ],
+      "auc_above_disease_median": 0.7403651115618661,
+      "mae_orr_pct": 11.631520785029275,
+      "pearson": 0.4086605791712836,
+      "removed_raw_rows": 14,
+      "rmse_orr_pct": 13.218838078183103,
+      "spearman": 0.47421309734263745
+    }
+  },
+  "strict_release_excluded_endpoint_caveat_rows": [
+    4782,
+    11729
+  ],
+  "strict_release_lodo_spearman_sensitivity": {
+    "auc_above_disease_median": 0.6962474645030426,
+    "mae_orr_pct": 12.571540827002169,
+    "pearson": 0.2922530219385001,
+    "rmse_orr_pct": 14.869602960501858,
+    "spearman": 0.41904800475244997
+  },
+  "strict_release_primary_metrics": {
+    "auc_above_disease_median": 0.742393509127789,
+    "mae_orr_pct": 11.585763458480809,
+    "mean_observed_orr": 12.317005419577614,
+    "mean_prediction": 17.657457610636836,
+    "pearson": 0.40930170068419885,
+    "rmse_orr_pct": 13.19321892673628,
+    "spearman": 0.46404726822364617,
+    "within_disease_pair_pearson": 0.36574325599321444,
+    "within_disease_pair_spearman": 0.30710941269242326,
+    "within_disease_pairs": 269
+  },
+  "strict_release_support_ncts": 114,
+  "strict_release_support_rows": 189,
+  "strict_release_target_support_ncts_max": 94,
+  "strict_release_target_support_ncts_mean": 57.93650793650794,
+  "strict_release_target_support_ncts_min": 12,
+  "strict_release_target_support_rows_max": 160,
+  "strict_release_target_support_rows_mean": 94.96825396825396,
+  "strict_release_target_support_rows_min": 16,
+  "support_reasonableness_classes": {
+    "ctgov_verified_orr_like": 184,
+    "exclude_in_strict_orr_sensitivity": 2,
+    "optional_exclude_for_confirmed_orr_only": 1,
+    "reviewed_keep_ctgov_measure_is_cr_pr_or_zero_response": 4
+  },
+  "target_eval_rows": 63,
+  "target_support_ncts_max": 95,
+  "target_support_ncts_mean": 58.76190476190476,
+  "target_support_ncts_min": 12,
+  "target_support_rows_max": 161,
+  "target_support_rows_mean": 95.7936507936508,
+  "target_support_rows_min": 16,
+  "verified_cleaned_support_ncts": 116,
+  "verified_cleaned_support_rows": 191
+}
