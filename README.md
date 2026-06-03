@@ -16,22 +16,29 @@ external source matrices.
 
 ## Figures
 
-Selected figures adapted from the
+Selected raw rendered SVG figures from the
 [Gaia blog](https://blog.alunadata.com/) are included here as local README
-assets. They summarize the model flow and benchmark surfaces without requiring
-remote blog assets to render.
+assets. They come from the local Terra blog project at
+`/Users/davidchu/Desktop/projects/spatial-fun/deploy/terra-demo-standalone/src/components/`.
 
 <p align="center">
-  <img src="docs/figures/gaia-architecture.svg" alt="Gaia architecture: encode, predict, decode" width="820">
+  <img src="docs/figures/blog-gaia-architecture.svg" alt="Gaia architecture diagram" width="820">
 </p>
 
 <p align="center">
-  <img src="docs/figures/biobench-row.svg" alt="BioBench row anatomy: edit the sender and read the receiver" width="820">
+  <img src="docs/figures/blog-biobench-row.svg" alt="How a BioBench row is built and scored" width="820">
 </p>
 
 <p align="center">
-  <img src="docs/figures/cohort-orr.svg" alt="Cohort-level ORR prediction summary" width="820">
+  <img src="docs/figures/blog-presponse-flow.svg" alt="How per-cell probabilities become p_response" width="820">
 </p>
+
+<p align="center">
+  <img src="docs/figures/blog-cohort-orr.svg" alt="Observed vs predicted ORR" width="520">
+</p>
+
+The cohort ORR figure is the blog display. The packaged cohort benchmark
+artifacts below are the 63-row production v2 release.
 
 ## BioBench
 
