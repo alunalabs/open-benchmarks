@@ -17,10 +17,10 @@ external source matrices.
 ## Figures
 
 Selected figures from the [Gaia blog](https://blog.alunadata.com/) are included
-here as local README assets. The raw SVG sources come from the local Terra blog
-project at
-`/Users/davidchu/Desktop/projects/spatial-fun/deploy/terra-demo-standalone/src/components/`;
-the README displays PNG exports rendered with the Terra blog fonts baked in.
+here as local README assets. They are exported from the raw Terra blog chart
+components in
+`/Users/davidchu/Desktop/projects/spatial-fun/deploy/terra-demo-standalone/src/components/`
+as PNGs with the Terra blog fonts baked in.
 
 <p align="center">
   <img src="docs/figures/blog-gaia-architecture.png" alt="Gaia architecture diagram" width="820">
