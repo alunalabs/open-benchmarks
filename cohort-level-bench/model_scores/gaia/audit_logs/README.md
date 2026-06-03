@@ -1,6 +1,6 @@
-# v13.1b Audit Logs
+# Gaia Audit Logs
 
-These are compact audit artifacts for the active/default v13.1b cohort score.
+These are compact audit artifacts for the active/default Gaia cohort score.
 
 Included:
 

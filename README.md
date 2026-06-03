@@ -14,6 +14,25 @@ and small result summaries. It intentionally does not commit raw spatial data,
 model checkpoints, per-cell caches, full row-level prediction tables, or large
 external source matrices.
 
+## Figures
+
+Selected figures adapted from the
+[Gaia blog](https://blog.alunadata.com/) are included here as local README
+assets. They summarize the model flow and benchmark surfaces without requiring
+remote blog assets to render.
+
+<p align="center">
+  <img src="docs/figures/gaia-architecture.svg" alt="Gaia architecture: encode, predict, decode" width="820">
+</p>
+
+<p align="center">
+  <img src="docs/figures/biobench-row.svg" alt="BioBench row anatomy: edit the sender and read the receiver" width="820">
+</p>
+
+<p align="center">
+  <img src="docs/figures/cohort-orr.svg" alt="Cohort-level ORR prediction summary" width="820">
+</p>
+
 ## BioBench
 
 BioBench tests whether a spatial model moves known tissue biology in the right
@@ -117,20 +136,20 @@ Public clinical row artifacts:
 These row files include clinical label and row metadata only; they exclude the
 full prediction and patient-probability columns.
 
-Public v13.1b model score artifacts:
+Public Gaia model score artifacts:
 
-- `cohort-level-bench/model_scores/v13_1b/v13_1b_63_model_scores.csv`:
-  all 63 ORR-scored evaluation rows with the active/default v13.1b score and
+- `cohort-level-bench/model_scores/gaia/gaia_63_model_scores.csv`:
+  all 63 ORR-scored evaluation rows with the active/default Gaia score and
   candidate score sidecars.
-- `cohort-level-bench/model_scores/v13_1b/v13_1b_best_63_model_scores.csv`:
+- `cohort-level-bench/model_scores/gaia/gaia_best_63_model_scores.csv`:
   focused 63-row table with the active/default score and the best packaged
   Pearson/Spearman sidecar scores, plus the universal softmin sidecar.
-- `cohort-level-bench/model_scores/v13_1b/v13_1b_metrics.csv`:
+- `cohort-level-bench/model_scores/gaia/gaia_metrics.csv`:
   global metrics for the active/default and candidate score columns.
-- `cohort-level-bench/model_scores/v13_1b/audit_logs/`:
+- `cohort-level-bench/model_scores/gaia/audit_logs/`:
   compact input-comparability and susceptibility audit artifacts.
 
-The active/default v13.1b score is `apoptosis_prevalence_no_prior_score`,
+The active/default Gaia score is `apoptosis_prevalence_no_prior_score`,
 with Pearson `0.511`, Spearman `0.520`, and AUC above disease median `0.765`
 on the 63 ORR-scored rows. The best packaged 63-row Pearson sidecar is
 `prob_apoptosis_prevalence_orr_gt_20pct`, with Pearson `0.650`, Spearman

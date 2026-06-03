@@ -34,19 +34,19 @@ def test_public_row_artifact_counts() -> None:
     assert summary["cohort_level"]["cohort_benchmark_v2_clinical_rows"] == 69
     assert summary["cohort_level"]["cohort_benchmark_v2_orr_labeled_clinical_rows"] == 66
     assert summary["cohort_level"]["cohort_benchmark_v2_eval_clinical_rows"] == 63
-    assert summary["cohort_level"]["v13_1b_63_model_score_rows"] == 63
-    assert summary["cohort_level"]["v13_1b_best_63_model_score_rows"] == 63
-    assert summary["cohort_level"]["v13_1b_candidate_score_columns"] == 9
+    assert summary["cohort_level"]["gaia_63_model_score_rows"] == 63
+    assert summary["cohort_level"]["gaia_best_63_model_score_rows"] == 63
+    assert summary["cohort_level"]["gaia_candidate_score_columns"] == 9
     assert (
-        summary["cohort_level"]["v13_1b_best_packaged_pearson_score_column"]
+        summary["cohort_level"]["gaia_best_packaged_pearson_score_column"]
         == "prob_apoptosis_prevalence_orr_gt_20pct"
     )
-    assert round(summary["cohort_level"]["v13_1b_best_packaged_pearson"], 3) == 0.650
+    assert round(summary["cohort_level"]["gaia_best_packaged_pearson"], 3) == 0.650
     assert (
-        summary["cohort_level"]["v13_1b_universal_softmin_score_column"]
+        summary["cohort_level"]["gaia_universal_softmin_score_column"]
         == "universal_axis_softmin_response_probability_mean"
     )
-    assert round(summary["cohort_level"]["v13_1b_universal_softmin_pearson"], 3) == 0.646
+    assert round(summary["cohort_level"]["gaia_universal_softmin_pearson"], 3) == 0.646
 
 
 def test_public_clinical_rows_are_metadata_only() -> None:
@@ -231,15 +231,15 @@ def test_atlas_strict_release_metrics() -> None:
     assert metrics[1]["run_id"] == "strict_release_lodo_spearman"
 
 
-def test_v13_1b_public_model_score_rows() -> None:
-    rows = read_csv("cohort-level-bench/model_scores/v13_1b/v13_1b_63_model_scores.csv")
+def test_gaia_public_model_score_rows() -> None:
+    rows = read_csv("cohort-level-bench/model_scores/gaia/gaia_63_model_scores.csv")
     best_rows = read_csv(
-        "cohort-level-bench/model_scores/v13_1b/v13_1b_best_63_model_scores.csv"
+        "cohort-level-bench/model_scores/gaia/gaia_best_63_model_scores.csv"
     )
-    metrics = read_csv("cohort-level-bench/model_scores/v13_1b/v13_1b_metrics.csv")
+    metrics = read_csv("cohort-level-bench/model_scores/gaia/gaia_metrics.csv")
     summary = json.loads(
         (
-            ROOT / "cohort-level-bench/model_scores/v13_1b/v13_1b_model_score_summary.json"
+            ROOT / "cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json"
         ).read_text()
     )
 
@@ -319,14 +319,14 @@ def test_v13_1b_public_model_score_rows() -> None:
     assert round(float(softmin_metric["spearman"]), 3) == 0.519
 
 
-def test_v13_1b_public_audit_logs_are_sanitized() -> None:
-    audit_dir = ROOT / "cohort-level-bench/model_scores/v13_1b/audit_logs"
+def test_gaia_public_audit_logs_are_sanitized() -> None:
+    audit_dir = ROOT / "cohort-level-bench/model_scores/gaia/audit_logs"
     nominal_rows = read_csv(
-        "cohort-level-bench/model_scores/v13_1b/audit_logs/"
+        "cohort-level-bench/model_scores/gaia/audit_logs/"
         "active_default_input_comparability_nominal_sample_source_split_sanitized.csv"
     )
     required_rows = read_csv(
-        "cohort-level-bench/model_scores/v13_1b/audit_logs/"
+        "cohort-level-bench/model_scores/gaia/audit_logs/"
         "active_default_input_comparability_required_inputs.csv"
     )
 
@@ -334,4 +334,4 @@ def test_v13_1b_public_audit_logs_are_sanitized() -> None:
     assert len(required_rows) == 4
     assert "patient_id" not in nominal_rows[0]
     assert (audit_dir / "active_default_input_comparability_report_excerpt.md").exists()
-    assert not (ROOT / "cohort-level-bench/model_scores/v13_1b/patient_probabilities.csv").exists()
+    assert not (ROOT / "cohort-level-bench/model_scores/gaia/patient_probabilities.csv").exists()

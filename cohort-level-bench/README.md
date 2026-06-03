@@ -39,19 +39,19 @@ model prediction table.
 
 ## Model Scores
 
-The `model_scores/v13_1b/` folder contains the reviewed public v13.1b
+The `model_scores/gaia/` folder contains the reviewed public Gaia
 cohort-model score artifacts:
 
-- `v13_1b_63_model_scores.csv`: all 63 ORR-scored evaluation rows with the
-  active/default v13.1b score and candidate score sidecars.
-- `v13_1b_best_63_model_scores.csv`: focused 63-row table with the active
+- `gaia_63_model_scores.csv`: all 63 ORR-scored evaluation rows with the
+  active/default Gaia score and candidate score sidecars.
+- `gaia_best_63_model_scores.csv`: focused 63-row table with the active
   default score, the best packaged Pearson/Spearman sidecars, and the universal
   softmin sidecar.
-- `v13_1b_metrics.csv`: global active/candidate metrics.
-- `v13_1b_by_disease_metrics.csv`: by-disease active/default metrics.
+- `gaia_metrics.csv`: global active/candidate metrics.
+- `gaia_by_disease_metrics.csv`: by-disease active/default metrics.
 - `audit_logs/`: compact input-comparability and susceptibility audits.
 
-The active/default v13.1b score is `apoptosis_prevalence_no_prior_score`
+The active/default Gaia score is `apoptosis_prevalence_no_prior_score`
 with Pearson `0.511` and Spearman `0.520` on the 63 ORR-scored rows.
 The best packaged 63-row Pearson sidecar is
 `prob_apoptosis_prevalence_orr_gt_20pct`, with Pearson `0.650` and Spearman

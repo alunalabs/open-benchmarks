@@ -9,7 +9,7 @@ the same calculation.
 ## Cohort Universal Softmin
 
 `universal_axis_softmin_response_probability_mean` is a cohort-level score in
-`cohort-level-bench/model_scores/v13_1b/`.
+`cohort-level-bench/model_scores/gaia/`.
 
 It is computed in two steps:
 

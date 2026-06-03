@@ -29,7 +29,7 @@
     "strict_raw_source_apples_to_apples": false
   },
   "benchmark_surface": "cohort_benchmark_v2",
-  "best_63_row_score_file": "v13_1b_best_63_model_scores.csv",
+  "best_63_row_score_file": "gaia_best_63_model_scores.csv",
   "best_candidate_by_pearson": {
     "auc_success_above_disease_median": "0.7352941176470589",
     "disease": "all",
@@ -124,7 +124,7 @@
     "within_disease_pair_weighted_spearman": 0.5253286365314036
   },
   "input_comparability_status": "formula_consistent_semantic_comparable_mixed_source_policy",
-  "model_id": "v13_1b_moa_tailored_universal_response_axes_v2",
+  "model_id": "gaia_moa_tailored_universal_response_axes_v2",
   "primary_readout": "patient_apoptotic_fraction_no_prior_axis_substitution",
   "score_selection_note": "The active/default score is preselected. The best packaged 63-row scores are global leaderboard summaries across nine precomputed sidecar columns; selecting the top Pearson or Spearman sidecar is label-aware candidate selection, but it does not refit rows, diseases, or model weights. The universal softmin sidecar is included explicitly because it is the second-best packaged Pearson score.",
   "source_prediction_rows": 69,

@@ -1,28 +1,28 @@
-# v13.1b Cohort Model Scores
+# Gaia Cohort Model Scores
 
-This folder contains the public cohort-level v13.1b model score artifacts for
+This folder contains the public cohort-level Gaia model score artifacts for
 the 63 ORR-scored cohort benchmark v2 rows.
 
 ## Included
 
-- `v13_1b_63_model_scores.csv`: one row per ORR-scored cohort-drug pair with
-  clinical label metadata, the active/default v13.1b score, and the candidate
+- `gaia_63_model_scores.csv`: one row per ORR-scored cohort-drug pair with
+  clinical label metadata, the active/default Gaia score, and the candidate
   score columns reported in the production metrics table.
-- `v13_1b_best_63_model_scores.csv`: focused 63-row table with the active
+- `gaia_best_63_model_scores.csv`: focused 63-row table with the active
   default score plus the best packaged Pearson/Spearman sidecars and the
   universal softmin sidecar.
-- `v13_1b_metrics.csv`: global metrics for the active score and candidate
+- `gaia_metrics.csv`: global metrics for the active score and candidate
   sidecar scores.
-- `v13_1b_by_disease_metrics.csv`: by-disease metrics for the active/default
+- `gaia_by_disease_metrics.csv`: by-disease metrics for the active/default
   score.
-- `v13_1b_model_score_summary.json`: machine-readable summary of the active
+- `gaia_model_score_summary.json`: machine-readable summary of the active
   score, candidate best metrics, and audit status.
-- `v13_1b_report.md`: production report for the v13.1b cohort default.
+- `gaia_report.md`: production report for the Gaia cohort default.
 - `audit_logs/`: compact audit and susceptibility artifacts.
 
 ## Active Release Score
 
-The active/default v13.1b score is `apoptosis_prevalence_no_prior_score`.
+The active/default Gaia score is `apoptosis_prevalence_no_prior_score`.
 
 It is computed as:
 
@@ -44,7 +44,7 @@ continuity aliases for `100 * score`.
 
 ## Best Packaged Sidecars
 
-The row file also includes candidate score columns from `v13_1b_metrics.csv`.
+The row file also includes candidate score columns from `gaia_metrics.csv`.
 These are included for transparency and auditability. The release default is
 not reselected per disease or per row.
 

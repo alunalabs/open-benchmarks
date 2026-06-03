@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="390" viewBox="0 0 960 390" role="img" aria-labelledby="title desc">
+  <title id="title">Cohort-level ORR prediction summary</title>
+  <desc id="desc">Observed versus predicted ORR summary for the public 63-row cohort benchmark, with Gaia sidecar and Atlas baseline metrics.</desc>
+  <defs>
+    <style>
+      .bg { fill: #fbfcff; }
+      .title { font: 700 24px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .subtitle { font: 500 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #536174; }
+      .label { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1f2a3a; }
+      .small { font: 500 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #5f6b7a; }
+      .metric { font: 700 22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .axis { stroke: #8b98aa; stroke-width: 1.3; }
+      .grid { stroke: #e2e8f0; stroke-width: 1; }
+      .dot { fill: #2f80ed; opacity: 0.76; stroke: #ffffff; stroke-width: 1.4; }
+      .line { stroke: #ef6f6c; stroke-width: 2.8; fill: none; }
+      .card { fill: #ffffff; stroke: #cdd6e4; rx: 8; }
+    </style>
+  </defs>
+  <rect class="bg" width="960" height="390"/>
+  <text class="title" x="40" y="46">Cohort-level ORR prediction</text>
+  <text class="subtitle" x="40" y="70">The release compares 63 drug-by-disease rows with finite observed ORR and finite Gaia scores.</text>
+
+  <g transform="translate(64 104)">
+    <rect x="0" y="0" width="560" height="230" fill="#ffffff" stroke="#d6dee9" rx="8"/>
+    <line class="grid" x1="58" y1="36" x2="520" y2="36"/>
+    <line class="grid" x1="58" y1="84" x2="520" y2="84"/>
+    <line class="grid" x1="58" y1="132" x2="520" y2="132"/>
+    <line class="grid" x1="58" y1="180" x2="520" y2="180"/>
+    <line class="axis" x1="58" y1="198" x2="520" y2="198"/>
+    <line class="axis" x1="58" y1="28" x2="58" y2="198"/>
+    <path class="line" d="M72 190 C170 163 240 137 320 105 S458 60 505 42"/>
+    <circle class="dot" cx="73" cy="190" r="5"/>
+    <circle class="dot" cx="116" cy="176" r="5"/>
+    <circle class="dot" cx="153" cy="181" r="5"/>
+    <circle class="dot" cx="174" cy="151" r="5"/>
+    <circle class="dot" cx="207" cy="144" r="5"/>
+    <circle class="dot" cx="230" cy="163" r="5"/>
+    <circle class="dot" cx="258" cy="119" r="5"/>
+    <circle class="dot" cx="287" cy="129" r="5"/>
+    <circle class="dot" cx="314" cy="106" r="5"/>
+    <circle class="dot" cx="340" cy="117" r="5"/>
+    <circle class="dot" cx="366" cy="83" r="5"/>
+    <circle class="dot" cx="398" cy="72" r="5"/>
+    <circle class="dot" cx="423" cy="94" r="5"/>
+    <circle class="dot" cx="457" cy="57" r="5"/>
+    <circle class="dot" cx="493" cy="43" r="5"/>
+    <text class="small" x="213" y="222">predicted response score</text>
+    <text class="small" x="-4" y="28" transform="rotate(-90 -4 28)">observed ORR</text>
+    <text class="small" x="54" y="217">low</text>
+    <text class="small" x="494" y="217">high</text>
+    <text class="small" x="12" y="202">0%</text>
+    <text class="small" x="8" y="39">80%</text>
+  </g>
+
+  <g transform="translate(670 104)">
+    <rect class="card" x="0" y="0" width="230" height="70"/>
+    <text class="label" x="18" y="25">Gaia universal softmin</text>
+    <text class="metric" x="18" y="54">Pearson 0.646</text>
+    <rect class="card" x="0" y="88" width="230" height="70"/>
+    <text class="label" x="18" y="113">Atlas ORR prior</text>
+    <text class="metric" x="18" y="142">Pearson 0.409</text>
+    <rect class="card" x="0" y="176" width="230" height="70"/>
+    <text class="label" x="18" y="201">DepMap lineage rank</text>
+    <text class="metric" x="18" y="230">Pearson -0.067</text>
+  </g>
+
+  <text class="subtitle" x="64" y="366">Metrics use the public 63-row cohort-level release; Atlas excludes exact-drug leakage and audited support mismatches.</text>
+</svg>
