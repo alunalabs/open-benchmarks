@@ -1,26 +1,34 @@
 {
-  "baseline_id": "cohort_level_depmap_orr",
-  "benchmark_surface": "cohort_benchmark_v2",
-  "target_rows": 63,
-  "covered_rows": 55,
-  "primary_score_col": "depmap_lineage_sensitivity_rank",
-  "method": {
-    "data": "DepMap GDSC1, GDSC2, and PRISM AUC matrices",
-    "disease_mapping": "cohort disease to DepMap OncotreeLineage",
-    "drug_matching": "normalized compound name plus small salt/prodrug synonym table",
-    "score": "1 - mean percentile AUC rank over matched-lineage cell lines",
-    "orientation": "higher means more lineage-sensitive"
+  "depmap_covered_rows": 40,
+  "methodology": {
+    "endpoint": "DepMap GDSC/PRISM AUC matrix",
+    "lineage_score": "1 - mean percentile AUC rank over matched lineage cell lines",
+    "min_global_lines": 5,
+    "min_lineage_lines": 2,
+    "min_rank_lines": 10,
+    "orientation": "higher depmap_lineage_sensitivity_rank means more lineage-sensitive",
+    "rank_normalization": "per-drug percentile rank of AUC within screen"
   },
-  "primary_metrics": {
-    "pearson": -0.06738899532552244,
-    "spearman": -0.06236571087103533,
-    "auc_above_disease_median": 0.4746666666666667
+  "primary_baseline": {
+    "auc_above_disease_median": 0.47368421052631576,
+    "label": "depmap_lineage_sensitivity_rank",
+    "mae_orr_pct": NaN,
+    "mean_observed_orr": 13.745,
+    "mean_prediction": 0.471926743851081,
+    "n_rows": 40,
+    "pearson": -0.013645548168619076,
+    "rmse_orr_pct": NaN,
+    "score_col": "depmap_lineage_sensitivity_rank",
+    "spearman": -0.04384043636775361,
+    "within_disease_pair_pearson": -0.010528028246118797,
+    "within_disease_pair_spearman": -0.016696187721387888,
+    "within_disease_pairs": 171
   },
   "screen_counts": {
-    "GDSC1": 7,
-    "GDSC2": 36,
-    "PRISM": 12
+    "GDSC1": 5,
+    "GDSC2": 29,
+    "PRISM": 6
   },
-  "interpretation": "Effectively null and slightly wrong-sign on this 63-row cohort-level ORR surface.",
-  "source_experiment": "spatial-fun/experiments/2026-06-02_atlas_depmap_v2_63_baselines"
+  "surface_score_col": "gaia_predicted_orr_pct",
+  "target_eval_rows": 44
 }

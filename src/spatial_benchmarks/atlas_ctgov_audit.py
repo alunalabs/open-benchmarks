@@ -620,7 +620,7 @@ def audit_atlas_ctgov_support(
         "methodology": {
             "support_scope": (
                 "unique Atlas arm rows contributing to fixed k=8 Atlas ORR score "
-                "on the 63 cohort benchmark v2 ORR rows"
+                "on the target cohort benchmark ORR rows"
             ),
             "ctgov_match_rule": (
                 "match ClinicalTrials.gov outcome measurement by result group and ORR-like "

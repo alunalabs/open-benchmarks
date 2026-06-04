@@ -4,8 +4,6 @@ import csv
 import math
 
 from spatial_benchmarks.atlas_orr import (
-    LODO_TUNED_SPEARMAN_SCORE_COL,
-    add_leave_disease_out_tuned_shrinkage,
     calculate_atlas_orr_baseline,
     write_atlas_orr_outputs,
 )
@@ -207,51 +205,6 @@ def test_atlas_baseline_can_exclude_raw_atlas_row_indices(tmp_path) -> None:
     assert math.isclose(filtered["atlas_mono_disease_therapy_shrink_k8"], 20.0)
 
 
-def test_lodo_tuning_selects_k_without_held_out_disease_labels() -> None:
-    rows = [
-        {
-            "cohort": "breast",
-            "observed_orr_pct": 100,
-            "atlas_mono_disease_therapy_shrink_k1": 77,
-            "atlas_mono_disease_therapy_shrink_k8": 5,
-        },
-        {
-            "cohort": "crc",
-            "observed_orr_pct": 0,
-            "atlas_mono_disease_therapy_shrink_k1": 0,
-            "atlas_mono_disease_therapy_shrink_k8": 30,
-        },
-        {
-            "cohort": "crc",
-            "observed_orr_pct": 10,
-            "atlas_mono_disease_therapy_shrink_k1": 10,
-            "atlas_mono_disease_therapy_shrink_k8": 20,
-        },
-        {
-            "cohort": "nsclc",
-            "observed_orr_pct": 20,
-            "atlas_mono_disease_therapy_shrink_k1": 20,
-            "atlas_mono_disease_therapy_shrink_k8": 10,
-        },
-        {
-            "cohort": "nsclc",
-            "observed_orr_pct": 30,
-            "atlas_mono_disease_therapy_shrink_k1": 30,
-            "atlas_mono_disease_therapy_shrink_k8": 0,
-        },
-    ]
-
-    fit_records = add_leave_disease_out_tuned_shrinkage(
-        rows,
-        objectives=("spearman",),
-        k_values=(1, 8),
-    )
-
-    breast_fit = next(row for row in fit_records if row["held_out_cohort"] == "breast")
-    assert breast_fit["selected_k"] == 1
-    assert rows[0][LODO_TUNED_SPEARMAN_SCORE_COL] == 77
-
-
 def test_write_atlas_outputs(tmp_path) -> None:
     atlas_rows = [
         atlas_row(nct_id=f"NCT{i}", arm_title=f"paclitaxel comparator {i}", orr=20 + i)
@@ -280,6 +233,6 @@ def test_write_atlas_outputs(tmp_path) -> None:
     )
     write_atlas_orr_outputs(result, output)
 
-    assert (output / "atlas_prior_predictions.csv").exists()
-    assert (output / "atlas_prior_metrics.csv").exists()
-    assert (output / "atlas_prior_methodology.md").exists()
+    assert (output / "atlas_orr_predictions.csv").exists()
+    assert (output / "atlas_orr_metrics.csv").exists()
+    assert (output / "atlas_orr_methodology.md").exists()

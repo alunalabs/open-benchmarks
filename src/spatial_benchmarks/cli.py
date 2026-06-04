@@ -9,12 +9,9 @@ from pathlib import Path
 from .atlas_orr import (
     STRICT_RELEASE_EXCLUDED_ATLAS_ROW_INDICES,
     calculate_atlas_orr_baseline,
-    calculate_atlas_orr_lodo_tuning,
-    write_atlas_orr_lodo_outputs,
     write_atlas_orr_outputs,
 )
 from .atlas_ctgov_audit import audit_atlas_ctgov_support, write_atlas_ctgov_audit_outputs
-from .cohort_v2 import CohortBenchmarkV2, summarize_predictions
 from .depmap_orr import calculate_depmap_orr_baseline, write_depmap_orr_outputs
 from .export import export_public_bundle
 from .io import read_csv_rows
@@ -25,16 +22,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="open-benchmarks")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    cohort = subparsers.add_parser(
-        "cohort-v2-metrics",
-        help="Recompute cohort benchmark v2 metrics.",
-    )
-    cohort.add_argument("--root", required=True, type=Path)
-    cohort.add_argument("--score-column", default=None)
-
     atlas = subparsers.add_parser(
         "atlas-orr-baseline",
-        help="Compute exact-drug-excluded atlas ORR baselines for cohort benchmark v2.",
+        help="Compute exact-drug-excluded Atlas ORR baselines for the strict cohort rows.",
     )
     atlas.add_argument("--atlas-csv", required=True, type=Path)
     atlas.add_argument("--cohort-predictions", required=True, type=Path)
@@ -56,30 +46,6 @@ def main(argv: list[str] | None = None) -> int:
         help="Additional zero-based raw Atlas CSV row index to exclude before scoring.",
     )
 
-    atlas_lodo = subparsers.add_parser(
-        "atlas-orr-lodo-tuning",
-        help="Run leave-disease-out k tuning for the Atlas ORR baseline.",
-    )
-    atlas_lodo.add_argument("--atlas-csv", required=True, type=Path)
-    atlas_lodo.add_argument("--cohort-predictions", required=True, type=Path)
-    atlas_lodo.add_argument("--output-dir", required=True, type=Path)
-    atlas_lodo.add_argument("--surface-score-column", default="default_score")
-    atlas_lodo.add_argument(
-        "--strict-release-cleaning",
-        action="store_true",
-        help=(
-            "Drop the reviewed strict-release raw Atlas row indices. "
-            "Use with the unfiltered raw Atlas CSV."
-        ),
-    )
-    atlas_lodo.add_argument(
-        "--exclude-raw-atlas-row-index",
-        action="append",
-        default=[],
-        type=int,
-        help="Additional zero-based raw Atlas CSV row index to exclude before scoring.",
-    )
-
     atlas_audit = subparsers.add_parser(
         "atlas-orr-ctgov-audit",
         help="Audit Atlas ORR support rows against ClinicalTrials.gov outcomes.",
@@ -93,7 +59,7 @@ def main(argv: list[str] | None = None) -> int:
 
     depmap = subparsers.add_parser(
         "depmap-orr-baseline",
-        help="Compute DepMap drug-sensitivity ORR baselines for cohort benchmark v2.",
+        help="Compute DepMap drug-sensitivity ORR baselines for the strict cohort rows.",
     )
     depmap.add_argument("--depmap-drug-dir", required=True, type=Path)
     depmap.add_argument("--model-csv", required=True, type=Path)
@@ -119,13 +85,7 @@ def main(argv: list[str] | None = None) -> int:
     export.add_argument("--include-row-results", action="store_true")
 
     args = parser.parse_args(argv)
-    if args.command == "cohort-v2-metrics":
-        benchmark = CohortBenchmarkV2.from_directory(args.root, load_predictions=True)
-        result = summarize_predictions(
-            benchmark.predictions,
-            score_col=args.score_column or benchmark.default_score_column,
-        )
-    elif args.command == "atlas-orr-baseline":
+    if args.command == "atlas-orr-baseline":
         excluded_indices = set(args.exclude_raw_atlas_row_index)
         if args.strict_release_cleaning:
             excluded_indices.update(STRICT_RELEASE_EXCLUDED_ATLAS_ROW_INDICES)
@@ -137,18 +97,6 @@ def main(argv: list[str] | None = None) -> int:
         )
         write_atlas_orr_outputs(result, args.output_dir)
         result = result["summary"]
-    elif args.command == "atlas-orr-lodo-tuning":
-        excluded_indices = set(args.exclude_raw_atlas_row_index)
-        if args.strict_release_cleaning:
-            excluded_indices.update(STRICT_RELEASE_EXCLUDED_ATLAS_ROW_INDICES)
-        result = calculate_atlas_orr_lodo_tuning(
-            atlas_csv=args.atlas_csv,
-            cohort_predictions_csv=args.cohort_predictions,
-            surface_score_col=args.surface_score_column,
-            excluded_raw_atlas_row_indices=excluded_indices,
-        )
-        write_atlas_orr_lodo_outputs(result, args.output_dir)
-        result = result["lodo_summary"]
     elif args.command == "atlas-orr-ctgov-audit":
         result = audit_atlas_ctgov_support(
             atlas_csv=args.atlas_csv,

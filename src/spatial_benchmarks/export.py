@@ -10,44 +10,6 @@ from typing import Any
 from .io import read_csv_rows, read_json, sha256_file, write_csv_rows, write_json
 from .patient_crc import filter_crc_rows
 
-COHORT_SAFE_FILES = (
-    "README.md",
-    "manifest.json",
-    "policy.json",
-    "metrics.csv",
-    "by_disease_metrics.csv",
-    "gene_shuffle_summary.csv",
-    "hard_donor_summary.csv",
-    "susceptibility_policy.json",
-)
-
-COHORT_CLINICAL_COLUMNS = (
-    "surface_pair_id",
-    "cohort_surface",
-    "drug_surface",
-    "drug_norm_surface",
-    "orr_pct",
-    "patient_denominator",
-    "label_source",
-    "label_priority",
-    "label_scope",
-    "orr_missing",
-    "benchmark_disease_key",
-    "current_default_moa_component",
-    "default_score_column",
-    "cohort",
-    "drug",
-    "drug_norm",
-    "moa_component",
-    "n_enrolled",
-    "n_patients_scored",
-)
-
-COHORT_ROW_RESULT_FILES = (
-    "predictions.csv",
-    "patient_probabilities.csv",
-)
-
 PATIENT_SAFE_FILES = (
     "universal_patient_response_axes_policy_20260525.json",
     "universal_patient_response_axes_metrics_20260525.csv",
@@ -125,19 +87,6 @@ def export_public_bundle(
         ],
     }
 
-    cohort_files = [*COHORT_SAFE_FILES, *(COHORT_ROW_RESULT_FILES if include_row_results else ())]
-    export_group(
-        source / "production/full_benchmark/cohort_benchmark_v2",
-        output / "cohort_benchmark_v2",
-        cohort_files,
-        manifest=manifest,
-        group="cohort_benchmark_v2",
-    )
-    export_cohort_clinical_rows(
-        source / "production/full_benchmark/cohort_benchmark_v2",
-        output / "cohort_benchmark_v2/clinical_rows",
-        manifest=manifest,
-    )
     export_group(
         source / "production/full_benchmark/patient_level",
         output / "patient_crc",
@@ -228,39 +177,6 @@ def export_patient_clinical_rows(
         write_csv_rows(output_path, rows, fieldnames=PATIENT_CRC_CLINICAL_COLUMNS)
         group_manifest[output_path.name] = artifact_record(output_path, crc_source)
         group_manifest[output_path.name]["rows"] = len(rows)
-
-
-def export_cohort_clinical_rows(
-    source_dir: Path,
-    output_dir: Path,
-    *,
-    manifest: dict[str, Any],
-) -> None:
-    source_path = source_dir / "predictions.csv"
-    if not source_path.exists():
-        return
-
-    group_manifest = manifest["artifacts"].setdefault("cohort_benchmark_v2_clinical_rows", {})
-    output_dir.mkdir(parents=True, exist_ok=True)
-    source_rows = read_csv_rows(source_path)
-    row_sets = {
-        "cohort_benchmark_v2_clinical_rows.csv": source_rows,
-        "cohort_benchmark_v2_orr_labeled_clinical_rows.csv": [
-            row for row in source_rows if is_finite(row.get("orr_pct"))
-        ],
-        "cohort_benchmark_v2_eval_clinical_rows.csv": [
-            row
-            for row in source_rows
-            if is_finite(row.get("orr_pct"))
-            and is_finite(row.get(str(row.get("default_score_column") or "default_score")))
-        ],
-    }
-    for name, rows in row_sets.items():
-        selected = select_columns(rows, COHORT_CLINICAL_COLUMNS)
-        output_path = output_dir / name
-        write_csv_rows(output_path, selected, fieldnames=COHORT_CLINICAL_COLUMNS)
-        group_manifest[name] = artifact_record(output_path, source_path)
-        group_manifest[name]["rows"] = len(selected)
 
 
 def select_columns(rows: list[dict[str, Any]], columns: tuple[str, ...]) -> list[dict[str, Any]]:

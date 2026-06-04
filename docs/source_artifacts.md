@@ -6,81 +6,72 @@ This repo was extracted from the internal `spatial-fun` monorepo.
 
 | Layer | Source surface | Intended public contents |
 | --- | --- | --- |
-| Cohort benchmark v2 | `production/full_benchmark/cohort_benchmark_v2` | README, manifest, policy, aggregate metrics, compact clinical-row manifests, reviewed Gaia 63-row score tables, compact audits |
-| Patient benchmark | `production/full_benchmark/patient_level` | policies, aggregate metrics, compact clinical-row manifests, reviewed CRC patient rank-score table |
-| Atlas ORR baseline | `atlas/results/ctgov_phase2_solid_tumor_atlas_cohorts_pubmed_supplement.csv` | code and methodology for exact-drug-excluded ORR priors; raw atlas remains external |
-| Atlas CTGov ORR audit | ClinicalTrials.gov v2 API study JSON | checked-in support-row audit CSVs with ClinicalTrials.gov citations; raw API cache remains external/ignored |
-| DepMap ORR baseline | `data/depmap/Model.csv`, `data/depmap/drug/*AUCMatrix.csv`, `data/depmap/drug/*CollapsedConditions.csv` | code and methodology for GDSC/PRISM drug-sensitivity baselines; raw matrices remain external |
+| Patient benchmark | Patient-level production exports | CRC clinical rows, compact CRC rank-score table, metrics, policy summaries |
+| Patient observed readout | CRC measured on-treatment readout audit | Compact p_response readout metrics, 11 patient scores, P2/P12 module reference |
+| Cohort benchmark | Strict ORR cohort rows | 44-row clinical manifest, 44-row Gaia predicted ORR table, metrics |
+| Atlas ORR baseline | Atlas trial-arm CSV | Code, methodology, and 44-row baseline result summaries; raw Atlas remains external |
+| DepMap ORR baseline | DepMap model/drug matrices | Code, methodology, 44-row feature table, and baseline result summaries; raw matrices remain external |
+
+BioBench is not part of this public release. The public cohort surface is the
+strict 44-row ORR set.
 
 ## Excluded By Default
 
 - Raw `h5ad`, per-cell, per-gene, and per-patient spatial data.
 - Model checkpoints, training code, Modal apps, S3 paths, and runtime caches.
-- Generated figures and PDFs outside the small local README figures in
-  `docs/figures/`.
 - Broad experiment folders and one-off analysis scripts.
 - Full patient-level model-score rows outside the reviewed compact CRC
   rank-score table checked into `patient-level-bench/model_scores/`.
-- Full cohort-level prediction/probability rows outside the reviewed 63-row
-  model-score tables checked into `cohort-level-bench/model_scores/gaia/`.
-- The full working `atlas/` directory. It is large and contains curation/intermediate artifacts; keep it as an external source artifact.
-- Raw DepMap drug-sensitivity matrices. Keep them as external source artifacts with their own data provenance and license notes.
+- Full cohort-level production prediction/probability rows outside the reviewed
+  44-row score table checked into `cohort-level-bench/model_scores/gaia/`.
+- Raw Atlas curation tables.
+- Raw DepMap drug-sensitivity matrices.
 
-## Review Before Publishing Row Results
+## Canonical Public Source Files
 
-Patient-level score tables can contain de-identified patient IDs, regimens,
-response labels, and per-patient model outputs. This repo includes compact
-clinical-row manifests with score/probability columns omitted. Full score tables
-should stay out of default source control unless the data owner has approved
-publication. If published, use a separate data release with a clear data
-license and stable checksums.
+Methodology:
 
-## Canonical Source Files
+- `docs/methodology.md`
 
-Cohort benchmark v2:
+Patient-level CRC:
 
-- `production/full_benchmark/cohort_benchmark_v2/README.md`
-- `production/full_benchmark/cohort_benchmark_v2/manifest.json`
-- `production/full_benchmark/cohort_benchmark_v2/policy.json`
-- `production/full_benchmark/cohort_benchmark_v2/metrics.csv`
-- `production/full_benchmark/cohort_benchmark_v2/by_disease_metrics.csv`
-- `production/full_benchmark/cohort_benchmark_v2/predictions.csv` as the source
-  for compact checked-in clinical row manifests and the reviewed 63-row Gaia
-  model-score tables
-- `production/full_benchmark/cohort_benchmark_v2/patient_probabilities.csv` is
-  not included in this repo
-- `production/full_benchmark/cohort_level/*active_default_input_comparability_*.csv`
-  as compact audit-log sources
+- `patient-level-bench/clinical_rows/crc_patient_clinical_rows_20260525.csv`
+- `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_rank_scores_20260525.csv`
+- `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_metrics_20260525.csv`
 
-CRC patient benchmark:
+Patient-level CRC observed on-treatment readout:
 
-- `production/full_benchmark/patient_level/universal_patient_response_axes_policy_20260525.json`
-- `production/full_benchmark/patient_level/universal_patient_response_axes_metrics_20260525.csv`
-- `production/full_benchmark/patient_level/universal_patient_response_axes_scores_20260525.csv`
-  as the source for compact checked-in clinical row labels with score columns
-  omitted
-- `production/full_benchmark/patient_level/crc_patient_moa_tailored_calibrated_response_distribution_policy_20260525.json`
-- `production/full_benchmark/patient_level/crc_patient_moa_tailored_calibrated_response_distribution_metrics_20260525.csv`
-- `production/full_benchmark/patient_level/crc_patient_moa_tailored_calibrated_response_distribution_scores_20260525.csv`
-  as the source for compact checked-in CRC regimen/outcome rows and the
-  reviewed CRC patient rank-score table
-- `production/full_benchmark/patient_level/crc_moa_delta_risk_probability_summary_20260516.csv`
+- `patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604/crc_on_treatment_p_response_readout_metrics.csv`
+- `patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604/crc_on_treatment_p_response_patient_scores.csv`
+- `patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604/crc_on_treatment_p2_p12_module_reference.csv`
+
+Cohort-level strict ORR:
+
+- [cohort-level-bench/clinical_rows/cohort_benchmark_strict44_clinical_rows.csv](../cohort-level-bench/clinical_rows/cohort_benchmark_strict44_clinical_rows.csv)
+- [cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv](../cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv)
+- [cohort-level-bench/model_scores/gaia/gaia_metrics.csv](../cohort-level-bench/model_scores/gaia/gaia_metrics.csv)
+- [cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json](../cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json)
 
 Atlas ORR baseline:
 
-- `atlas/results/ctgov_phase2_solid_tumor_atlas_cohorts_pubmed_supplement.csv` as the external atlas input
-- `production/full_benchmark/cohort_benchmark_v2/predictions.csv` as the target cohort-drug ORR surface when row results are approved
-- `experiments/2026-06-02_atlas_depmap_v2_63_baselines/results/report.md` as the source experiment report for the June 2026 baseline numbers
-- `experiments/2026-06-02_atlas_depmap_v2_63_baselines/results/overfit_diagnostics_report.md` as the overfit-sensitivity report
-- ClinicalTrials.gov v2 API URLs, one per NCT ID, as the audit citation source for checked-in `cohort-level-bench/baseline/results/atlas_orr_ctgov_audit.csv`
+- `atlas/results/ctgov_phase2_solid_tumor_atlas_cohorts_pubmed_supplement.csv`
+  as the external Atlas input.
+- `cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv`
+  as the target row file.
+- `cohort-level-bench/baseline/results/atlas_orr_metrics.csv`
+- `cohort-level-bench/baseline/results/atlas_orr_summary.json`
 
 DepMap ORR baseline:
 
-- `data/depmap/Model.csv` as the external model-lineage metadata
+- `data/depmap/Model.csv` as external model-lineage metadata.
 - `data/depmap/drug/GDSC2AUCMatrix.csv`
 - `data/depmap/drug/GDSC1AUCMatrix.csv`
 - `data/depmap/drug/REPURPOSINGAUCMatrix.csv`
 - `data/depmap/drug/GDSC2Log2ViabilityCollapsedConditions.csv`
 - `data/depmap/drug/GDSC1Log2ViabilityCollapsedConditions.csv`
 - `data/depmap/drug/REPURPOSINGLog2ViabilityCollapsedConditions.csv`
-- `production/full_benchmark/cohort_benchmark_v2/predictions.csv` as the target cohort-drug ORR surface when row results are approved
+- `cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv`
+  as the target row file.
+- `cohort-level-bench/baseline/results/depmap_orr_features.csv`
+- `cohort-level-bench/baseline/results/depmap_orr_metrics.csv`
+- `cohort-level-bench/baseline/results/depmap_orr_summary.json`

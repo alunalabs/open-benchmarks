@@ -96,6 +96,6 @@ def test_depmap_baseline_rank_normalizes_lineage_sensitivity(tmp_path) -> None:
 
     output = tmp_path / "out"
     write_depmap_orr_outputs(result, output)
-    assert (output / "depmap_v2_63_features.csv").exists()
-    assert (output / "depmap_v2_63_metrics.csv").exists()
-    assert (output / "depmap_v2_63_methodology.md").exists()
+    assert (output / "depmap_orr_features.csv").exists()
+    assert (output / "depmap_orr_metrics.csv").exists()
+    assert (output / "depmap_orr_methodology.md").exists()

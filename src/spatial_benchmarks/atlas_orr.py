@@ -1,4 +1,4 @@
-"""Atlas-derived non-drug ORR baselines for cohort benchmark v2."""
+"""Atlas-derived ORR baselines for the strict 44-row cohort benchmark."""
 
 from __future__ import annotations
 
@@ -153,9 +153,7 @@ ATLAS_TEXT_COLUMNS = (
 
 PRIMARY_SCORE_COL = "atlas_mono_disease_therapy_shrink_k8"
 LEGACY_PRIMARY_SCORE_COL = "atlas_mono_allcomer_hierarchical_prior_therapy_first_orr"
-SHRINKAGE_K_VALUES = (1, 3, 5, 8, 10, 15, 25, 50, 100)
-LODO_TUNED_SPEARMAN_SCORE_COL = "atlas_mono_disease_therapy_shrink_lodo_tuned_spearman"
-LODO_TUNED_MAE_SCORE_COL = "atlas_mono_disease_therapy_shrink_lodo_tuned_mae"
+SHRINKAGE_K_VALUES = (8,)
 CTGOV_AUDIT_EXCEPTION_ATLAS_ROW_INDICES = (
     582,
     1519,
@@ -174,11 +172,6 @@ OPTIONAL_UNCONFIRMED_ORR_ATLAS_ROW_INDICES = (7251,)
 STRICT_RELEASE_EXCLUDED_ATLAS_ROW_INDICES = tuple(
     sorted((*CTGOV_AUDIT_EXCEPTION_ATLAS_ROW_INDICES, *STRICT_NON_ORR_ATLAS_ROW_INDICES))
 )
-LODO_OBJECTIVE_TO_SCORE_COL = {
-    "spearman": LODO_TUNED_SPEARMAN_SCORE_COL,
-    "mae": LODO_TUNED_MAE_SCORE_COL,
-}
-
 
 def norm_text(value: Any) -> str:
     text = str(value or "").lower()
@@ -694,174 +687,13 @@ def add_atlas_shrinkage_priors(
 
 
 def baseline_metrics(predictions: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    score_specs = [
-        (
-            "atlas_mono_disease_therapy_shrink_k8",
-            "atlas_mono_disease_therapy_shrink_k8",
-            True,
-        ),
-        (
-            "atlas_mono_disease_therapy_raw_or_primary",
-            "atlas_mono_disease_therapy_raw_or_primary",
-            True,
-        ),
-        (
-            "atlas_mono_allcomer_hierarchical_prior_therapy_first_orr",
-            "atlas_mono_allcomer_therapy_first_non_drug_prior",
-            True,
-        ),
-        (
-            "atlas_mono_allcomer_hierarchical_prior_orr",
-            "atlas_mono_allcomer_hierarchical_non_drug_prior",
-            True,
-        ),
-        (
-            "atlas_hierarchical_prior_therapy_first_orr",
-            "atlas_broad_therapy_first_non_drug_prior",
-            True,
-        ),
-        (
-            "atlas_mono_allcomer_prior_disease_moa_orr",
-            "atlas_mono_allcomer_disease_moa_raw",
-            True,
-        ),
-        (
-            "atlas_mono_allcomer_prior_disease_therapy_orr",
-            "atlas_mono_allcomer_disease_therapy_raw",
-            True,
-        ),
-        (
-            "atlas_mono_allcomer_prior_disease_baseline_orr",
-            "atlas_mono_allcomer_disease_baseline_raw",
-            True,
-        ),
-        ("atlas_hierarchical_prior_orr", "atlas_hierarchical_non_drug_prior", True),
-        ("atlas_prior_disease_moa_orr", "atlas_disease_moa_raw", True),
-        ("atlas_prior_disease_therapy_orr", "atlas_disease_therapy_raw", True),
-        ("atlas_prior_disease_baseline_orr", "atlas_disease_baseline_raw", True),
-        ("atlas_prior_global_moa_orr", "atlas_global_moa_raw", True),
-    ]
-    for k in SHRINKAGE_K_VALUES:
-        if k == 8:
-            continue
-        score_specs.append(
-            (
-                f"atlas_mono_disease_therapy_shrink_k{k}",
-                f"atlas_mono_disease_therapy_shrink_k{k}",
-                True,
-            )
-        )
-    metrics = []
-    for score_col, label, is_orr_scale in score_specs:
-        metrics.append(
-            metric_row(
-                predictions,
-                score_col=score_col,
-                label=label,
-                is_orr_scale=is_orr_scale,
-            )
-        )
-    return metrics
-
-
-def finite_or(value: Any, fallback: float) -> float:
-    numeric = finite_float(value)
-    return numeric if math.isfinite(numeric) else fallback
-
-
-def select_lodo_k(
-    train_rows: list[dict[str, Any]],
-    *,
-    objective: str,
-    k_values: tuple[int, ...] = SHRINKAGE_K_VALUES,
-) -> dict[str, Any]:
-    if objective not in LODO_OBJECTIVE_TO_SCORE_COL:
-        raise ValueError(f"unsupported LODO objective: {objective}")
-
-    scored_k: list[dict[str, Any]] = []
-    for k in k_values:
-        score_col = f"atlas_mono_disease_therapy_shrink_k{k}"
-        metric = metric_row(
-            train_rows,
-            score_col=score_col,
-            label=score_col,
-            is_orr_scale=True,
-        )
-        scored_k.append(
-            {
-                "k": k,
-                "mae": metric["mae_orr_pct"],
-                "pearson": metric["pearson"],
-                "spearman": metric["spearman"],
-            }
-        )
-
-    if objective == "mae":
-        return sorted(
-            scored_k,
-            key=lambda row: (
-                finite_or(row["mae"], math.inf),
-                -finite_or(row["pearson"], -math.inf),
-                row["k"],
-            ),
-        )[0]
-    return sorted(
-        scored_k,
-        key=lambda row: (
-            -finite_or(row["spearman"], -math.inf),
-            finite_or(row["mae"], math.inf),
-            row["k"],
-        ),
-    )[0]
-
-
-def add_leave_disease_out_tuned_shrinkage(
-    predictions: list[dict[str, Any]],
-    *,
-    objectives: tuple[str, ...] = ("mae", "spearman"),
-    k_values: tuple[int, ...] = SHRINKAGE_K_VALUES,
-) -> list[dict[str, Any]]:
-    """Add LODO-tuned shrinkage predictions and return per-fold fit records."""
-
-    diseases = sorted({str(row.get("cohort") or "") for row in predictions})
-    fit_records: list[dict[str, Any]] = []
-    for disease in diseases:
-        test_rows = [row for row in predictions if str(row.get("cohort") or "") == disease]
-        train_rows = [row for row in predictions if str(row.get("cohort") or "") != disease]
-        for objective in objectives:
-            best = select_lodo_k(train_rows, objective=objective, k_values=k_values)
-            output_col = LODO_OBJECTIVE_TO_SCORE_COL[objective]
-            source_col = f"atlas_mono_disease_therapy_shrink_k{best['k']}"
-            for row in test_rows:
-                row[output_col] = row.get(source_col, math.nan)
-            fit_records.append(
-                {
-                    "held_out_cohort": disease,
-                    "selection_objective": objective,
-                    "selected_k": best["k"],
-                    "train_mae_orr_pct": best["mae"],
-                    "train_pearson": best["pearson"],
-                    "train_spearman": best["spearman"],
-                    "n_test": len(test_rows),
-                }
-            )
-    return fit_records
-
-
-def lodo_metrics(predictions: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [
         metric_row(
             predictions,
-            score_col=LODO_TUNED_SPEARMAN_SCORE_COL,
-            label=LODO_TUNED_SPEARMAN_SCORE_COL,
+            score_col=PRIMARY_SCORE_COL,
+            label=PRIMARY_SCORE_COL,
             is_orr_scale=True,
-        ),
-        metric_row(
-            predictions,
-            score_col=LODO_TUNED_MAE_SCORE_COL,
-            label=LODO_TUNED_MAE_SCORE_COL,
-            is_orr_scale=True,
-        ),
+        )
     ]
 
 
@@ -896,7 +728,6 @@ def calculate_atlas_orr_baseline(
     )
     metrics = baseline_metrics(predictions)
     primary_metric = next(row for row in metrics if row["score_col"] == PRIMARY_SCORE_COL)
-    legacy_metric = next(row for row in metrics if row["score_col"] == LEGACY_PRIMARY_SCORE_COL)
     source_counts = Counter(
         str(row.get("atlas_mono_allcomer_hierarchical_prior_therapy_first_source") or "")
         for row in predictions
@@ -908,7 +739,6 @@ def calculate_atlas_orr_baseline(
         "target_eval_rows": len(target_rows),
         "surface_score_col": surface_score_col or "",
         "primary_baseline": primary_metric,
-        "legacy_primary_baseline": legacy_metric,
         "primary_source_counts": dict(sorted(source_counts.items())),
         "methodology": {
             "endpoint": "model_orr_pct",
@@ -918,7 +748,7 @@ def calculate_atlas_orr_baseline(
             "primary_filter": "all-comer monotherapy: is_combination != true and biomarker != yes",
             "primary_formula": (
                 "n/(n+8) * disease_therapy_ORR + 8/(n+8) * global_therapy_ORR; "
-                "falls back to the legacy hierarchy when either cell is unavailable"
+                "falls back to the predefined hierarchy when either cell is unavailable"
             ),
             "weighting": "weighted mean ORR by orr_denom when available; otherwise weight 1",
             "prediction_inputs_used": [
@@ -931,7 +761,7 @@ def calculate_atlas_orr_baseline(
             ],
             "prediction_inputs_not_used": [
                 "target observed ORR label",
-                "production spatial-model score",
+                "Gaia score",
                 "tumor biology or patient-level features",
                 "exact target drug Atlas arms",
                 "DepMap features",
@@ -953,128 +783,22 @@ def calculate_atlas_orr_baseline(
     }
 
 
-def calculate_atlas_orr_lodo_tuning(
-    *,
-    atlas_csv: str | Path,
-    cohort_predictions_csv: str | Path,
-    surface_score_col: str | None = "default_score",
-    excluded_raw_atlas_row_indices: set[int] | None = None,
-) -> dict[str, Any]:
-    result = calculate_atlas_orr_baseline(
-        atlas_csv=atlas_csv,
-        cohort_predictions_csv=cohort_predictions_csv,
-        surface_score_col=surface_score_col,
-        excluded_raw_atlas_row_indices=excluded_raw_atlas_row_indices,
-    )
-    fit_records = add_leave_disease_out_tuned_shrinkage(result["predictions"])
-    metrics = lodo_metrics(result["predictions"])
-    result["lodo_fit_records"] = fit_records
-    result["lodo_metrics"] = metrics
-    result["lodo_summary"] = {
-        "target_eval_rows": result["summary"]["target_eval_rows"],
-        "surface_score_col": surface_score_col or "",
-        "excluded_raw_atlas_row_indices": result["summary"].get(
-            "excluded_raw_atlas_row_indices",
-            [],
-        ),
-        "excluded_raw_atlas_row_count": result["summary"].get(
-            "excluded_raw_atlas_row_count",
-            0,
-        ),
-        "k_grid": list(SHRINKAGE_K_VALUES),
-        "tuning_unit": "leave one disease/cohort out",
-        "selection_objectives": ["mae", "spearman"],
-        "primary_sensitivity_metric": next(
-            row for row in metrics if row["score_col"] == LODO_TUNED_SPEARMAN_SCORE_COL
-        ),
-        "fit_records": fit_records,
-        "methodology": {
-            "prediction_inputs": "same exact-drug-excluded Atlas priors as the fixed baseline",
-            "label_use": (
-                "observed ORR is used only inside non-held-out diseases to select k; "
-                "held-out disease predictions never see held-out disease labels"
-            ),
-            "not_primary_baseline": (
-                "LODO tuning is an anti-overfit sensitivity check, not the release primary score"
-            ),
-        },
-    }
-    return result
-
-
 def write_atlas_orr_outputs(result: dict[str, Any], output_dir: str | Path) -> None:
     output = Path(output_dir)
-    write_csv_rows(output / "atlas_prior_predictions.csv", result["predictions"])
-    write_csv_rows(output / "atlas_prior_support_cells.csv", result["support_cells"])
-    write_csv_rows(output / "atlas_prior_metrics.csv", result["metrics"])
-    write_csv_rows(output / "atlas_baseline_cells.csv", result["baseline_cells"])
+    write_csv_rows(output / "atlas_orr_predictions.csv", result["predictions"])
+    write_csv_rows(output / "atlas_orr_support_cells.csv", result["support_cells"])
+    write_csv_rows(output / "atlas_orr_metrics.csv", result["metrics"])
+    write_csv_rows(output / "atlas_orr_baseline_cells.csv", result["baseline_cells"])
     write_csv_rows(
-        output / "atlas_mono_allcomer_baseline_cells.csv",
+        output / "atlas_orr_mono_allcomer_baseline_cells.csv",
         result["mono_allcomer_baseline_cells"],
     )
-    write_json(output / "atlas_prior_summary.json", result["summary"])
-    write_methodology_report(output / "atlas_prior_methodology.md", result)
-
-
-def write_atlas_orr_lodo_outputs(result: dict[str, Any], output_dir: str | Path) -> None:
-    output = Path(output_dir)
-    write_csv_rows(output / "atlas_orr_lodo_predictions.csv", result["predictions"])
-    write_csv_rows(output / "atlas_orr_lodo_fit_records.csv", result["lodo_fit_records"])
-    write_csv_rows(output / "atlas_orr_lodo_metrics.csv", result["lodo_metrics"])
-    write_json(output / "atlas_orr_lodo_summary.json", result["lodo_summary"])
-    write_lodo_methodology_report(output / "atlas_orr_lodo_methodology.md", result)
-
-
-def write_lodo_methodology_report(path: str | Path, result: dict[str, Any]) -> None:
-    primary = result["lodo_summary"]["primary_sensitivity_metric"]
-    excluded = result["summary"].get("excluded_raw_atlas_row_indices", [])
-    Path(path).parent.mkdir(parents=True, exist_ok=True)
-    Path(path).write_text(
-        "\n".join(
-            [
-                "# Atlas ORR Leave-Disease-Out Tuning",
-                "",
-                "This is an anti-overfit sensitivity check for the Atlas shrinkage prior.",
-                "It is not the primary release baseline.",
-                "",
-                "## Procedure",
-                "",
-                "- Start from exact-drug-excluded Atlas shrinkage scores for each fixed `k`.",
-                "- Hold out one disease/cohort at a time.",
-                "- Select `k` using only all non-held-out diseases.",
-                "- Apply the selected `k` to every row in the held-out disease.",
-                "- Concatenate held-out predictions across diseases and evaluate once.",
-                "",
-                "## Label Boundary",
-                "",
-                (
-                    "- Observed ORR is used in training diseases to choose `k`, "
-                    "but never in the held-out disease being predicted."
-                ),
-                "- No tumor biology, production spatial score, or exact target drug arms are used.",
-                (
-                    "- Strict-release Atlas row exclusions: "
-                    f"{', '.join(str(idx) for idx in excluded) if excluded else 'none'}."
-                ),
-                "",
-                "## Primary LODO Sensitivity Metric",
-                "",
-                f"- Score column: `{primary['score_col']}`",
-                f"- Rows: {primary['n_rows']}",
-                f"- Pearson: {primary['pearson']}",
-                f"- Spearman: {primary['spearman']}",
-                f"- AUC above disease median: {primary['auc_above_disease_median']}",
-                f"- MAE ORR pct: {primary['mae_orr_pct']}",
-                "",
-            ]
-        ),
-        encoding="utf-8",
-    )
+    write_json(output / "atlas_orr_summary.json", result["summary"])
+    write_methodology_report(output / "atlas_orr_methodology.md", result)
 
 
 def write_methodology_report(path: str | Path, result: dict[str, Any]) -> None:
     primary = result["summary"]["primary_baseline"]
-    legacy = result["summary"]["legacy_primary_baseline"]
     source_counts = result["summary"]["primary_source_counts"]
     excluded = result["summary"].get("excluded_raw_atlas_row_indices", [])
     Path(path).parent.mkdir(parents=True, exist_ok=True)
@@ -1113,7 +837,7 @@ def write_methodology_report(path: str | Path, result: dict[str, Any]) -> None:
                     "available, otherwise weight 1."
                 ),
                 (
-                    "- Fallback: use the legacy all-comer monotherapy therapy-first hierarchy "
+                    "- Fallback: use the predefined all-comer monotherapy therapy-first hierarchy "
                     "when either shrinkage cell is unavailable."
                 ),
                 "",
@@ -1133,7 +857,7 @@ def write_methodology_report(path: str | Path, result: dict[str, Any]) -> None:
                 "Not used:",
                 "",
                 "- Target observed ORR label, except for post hoc evaluation metrics.",
-                "- Production spatial-model score.",
+                "- Gaia score.",
                 "- Tumor biology or patient-level features.",
                 "- Exact target drug Atlas arms.",
                 "- DepMap features.",
@@ -1158,13 +882,6 @@ def write_methodology_report(path: str | Path, result: dict[str, Any]) -> None:
                 f"- Spearman: {primary['spearman']}",
                 f"- AUC above disease median: {primary['auc_above_disease_median']}",
                 f"- MAE ORR pct: {primary['mae_orr_pct']}",
-                "",
-                "## Legacy Comparator",
-                "",
-                f"- Score column: `{legacy['score_col']}`",
-                f"- Pearson: {legacy['pearson']}",
-                f"- Spearman: {legacy['spearman']}",
-                f"- AUC above disease median: {legacy['auc_above_disease_median']}",
                 "",
                 "## Primary Fallback Counts",
                 "",

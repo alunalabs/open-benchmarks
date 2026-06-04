@@ -1,15 +1,15 @@
 # DepMap ORR Baseline
 
 This repo includes a reproducible calculator for DepMap drug-sensitivity
-baselines on cohort benchmark v2. The raw DepMap matrices are not checked into
-this code repo; they are large external source artifacts.
+baselines on the 44-row strict cohort benchmark. The raw DepMap matrices are
+external source artifacts and are not checked into this repository.
 
 ## Source Inputs
 
 - DepMap model metadata: `data/depmap/Model.csv`
 - DepMap drug matrices: `data/depmap/drug/{GDSC2,GDSC1,REPURPOSING}AUCMatrix.csv`
 - DepMap compound indexes: `data/depmap/drug/*CollapsedConditions.csv`
-- Cohort v2 predictions CSV: `production/full_benchmark/cohort_benchmark_v2/predictions.csv`
+- Target rows: `cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv`
 
 ## Primary Baseline
 
@@ -25,38 +25,35 @@ For each target cohort-drug row:
 6. Use `depmap_lineage_sensitivity_rank = 1 - lineage_rank` as the score, so
    higher means the lineage is more sensitive.
 
-This is an intentionally simple external-data baseline. It uses drug identity
-through DepMap sensitivity, unlike the Atlas prior, but it does not fit a model
-to the 63 cohort labels.
+This is an external-data baseline. It uses drug identity through DepMap
+sensitivity, but it does not fit a model to ORR labels.
 
-## June 2026 Result
+## Released Result
 
-On the 63 ORR-scored cohort benchmark v2 rows, DepMap covered 55 rows. The
-primary lineage-sensitivity-rank baseline reached:
+On the 44 strict ORR rows, DepMap covered 40 rows. The primary
+lineage-sensitivity-rank baseline reached:
 
-- Pearson: -0.067
-- Spearman: -0.062
-- AUC above disease median: 0.475
+- Pearson r: `-0.014`
+- Spearman rho: `-0.044`
+- AUC above disease median: `0.474`
 
-The result is effectively null and slightly wrong-sign on this cohort-level
-monotherapy surface. It is included as a useful negative baseline.
+The result is effectively null on this cohort-level ORR surface. It is included
+as a negative baseline on the same target rows as Gaia and Atlas.
 
 ## Reproduce
 
-From this repo:
-
 ```bash
-open-benchmarks depmap-orr-baseline \
+python cohort-level-bench/baseline/depmap_orr_baseline.py \
   --depmap-drug-dir /path/to/spatial-fun/data/depmap/drug \
   --model-csv /path/to/spatial-fun/data/depmap/Model.csv \
-  --cohort-predictions /path/to/spatial-fun/production/full_benchmark/cohort_benchmark_v2/predictions.csv \
+  --cohort-predictions cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv \
   --output-dir artifacts/depmap_orr_baseline \
-  --surface-score-column default_score
+  --surface-score-column gaia_predicted_orr_pct
 ```
 
 Outputs:
 
-- `depmap_v2_63_features.csv`
-- `depmap_v2_63_metrics.csv`
-- `depmap_v2_63_summary.json`
-- `depmap_v2_63_methodology.md`
+- `depmap_orr_features.csv`
+- `depmap_orr_metrics.csv`
+- `depmap_orr_summary.json`
+- `depmap_orr_methodology.md`

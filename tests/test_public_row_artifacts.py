@@ -20,31 +20,46 @@ def test_public_row_artifact_counts() -> None:
     assert summary["patient_level"]["universal_patient_response_axes_clinical_rows"] == 23
     assert summary["patient_level"]["crc_patient_clinical_rows"] == 11
     assert summary["patient_level"]["crc_moa_tailored_rank_score_rows"] == 11
-    assert (
-        summary["patient_level"]["crc_moa_tailored_default_score_column"]
-        == "response_score_rank_calibrated"
+    assert summary["patient_level"]["crc_moa_tailored_default_score_column"] == (
+        "response_score_rank_calibrated"
     )
     assert round(summary["patient_level"]["crc_moa_tailored_default_auc_response_high"], 3) == 0.800
     assert (
         round(summary["patient_level"]["crc_moa_tailored_default_fixed_0p5_balanced_accuracy"], 3)
         == 0.733
     )
-    assert summary["cohort_level"]["cohort_benchmark_v2_clinical_rows"] == 69
-    assert summary["cohort_level"]["cohort_benchmark_v2_orr_labeled_clinical_rows"] == 66
-    assert summary["cohort_level"]["cohort_benchmark_v2_eval_clinical_rows"] == 63
-    assert summary["cohort_level"]["gaia_63_model_score_rows"] == 63
-    assert summary["cohort_level"]["gaia_best_63_model_score_rows"] == 63
-    assert summary["cohort_level"]["gaia_candidate_score_columns"] == 9
+    assert summary["patient_level"]["crc_on_treatment_p_response_patient_rows"] == 11
     assert (
-        summary["cohort_level"]["gaia_best_packaged_pearson_score_column"]
-        == "prob_apoptosis_prevalence_orr_gt_20pct"
+        round(summary["patient_level"]["crc_on_treatment_p_response_absolute_state_auc"], 3)
+        == 0.867
     )
-    assert round(summary["cohort_level"]["gaia_best_packaged_pearson"], 3) == 0.650
     assert (
-        summary["cohort_level"]["gaia_universal_softmin_score_column"]
-        == "universal_axis_softmin_response_probability_mean"
+        round(
+            summary["patient_level"][
+                "crc_on_treatment_p_response_absolute_state_balanced_accuracy"
+            ],
+            3,
+        )
+        == 0.917
     )
-    assert round(summary["cohort_level"]["gaia_universal_softmin_pearson"], 3) == 0.646
+    assert round(summary["patient_level"]["crc_on_treatment_p_response_delta_auc"], 3) == 0.600
+    assert (
+        round(summary["patient_level"]["crc_on_treatment_signed_risk_adapter_auc_sd_high"], 3)
+        == 0.900
+    )
+
+    cohort = summary["cohort_level"]
+    assert cohort["cohort_benchmark_strict44_clinical_rows"] == 44
+    assert cohort["gaia_44_strict_orr_model_score_rows"] == 44
+    assert cohort["gaia_default_score_column"] == "gaia_predicted_orr_pct"
+    assert round(cohort["gaia_pearson"], 3) == 0.650
+    assert round(cohort["gaia_spearman"], 3) == 0.594
+    assert round(cohort["gaia_mae_orr_pct"], 1) == 10.2
+    assert round(cohort["atlas_fixed_k8_pearson"], 3) == 0.465
+    assert round(cohort["atlas_fixed_k8_spearman"], 3) == 0.460
+    assert cohort["depmap_covered_rows"] == 40
+    assert round(cohort["depmap_primary_pearson"], 3) == -0.014
+    assert round(cohort["depmap_primary_spearman"], 3) == -0.044
 
 
 def test_public_clinical_rows_are_metadata_only() -> None:
@@ -53,18 +68,18 @@ def test_public_clinical_rows_are_metadata_only() -> None:
         "universal_patient_response_axes_clinical_rows_20260525.csv"
     )
     cohort_rows = read_csv(
-        "cohort-level-bench/clinical_rows/cohort_benchmark_v2_eval_clinical_rows.csv"
+        "cohort-level-bench/clinical_rows/cohort_benchmark_strict44_clinical_rows.csv"
     )
 
     patient_forbidden = {"relative_response_probability", "nonresponse_probability", "risk_score"}
     cohort_forbidden = {
         "default_score",
+        "gaia_predicted_orr_pct",
         "patient_probabilities",
         "relative_response_probability_mean",
     }
 
-    assert patient_rows
-    assert cohort_rows
+    assert len(cohort_rows) == 44
     assert patient_forbidden.isdisjoint(patient_rows[0])
     assert cohort_forbidden.isdisjoint(cohort_rows[0])
 
@@ -164,75 +179,51 @@ def _sigmoid(value: float, *, center: float, scale: float) -> float:
     return 1.0 / (1.0 + math.exp(-z))
 
 
-def test_atlas_support_reasonableness_audit_counts() -> None:
-    summary = json.loads(
-        (
-            ROOT
-            / "cohort-level-bench/baseline/results/"
-            "atlas_orr_support_reasonableness_summary.json"
-        ).read_text()
-    )
+def test_crc_observed_on_treatment_p_response_readout() -> None:
+    base = "patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604"
+    rows = read_csv(f"{base}/crc_on_treatment_p_response_patient_scores.csv")
+    metrics = read_csv(f"{base}/crc_on_treatment_p_response_readout_metrics.csv")
+    modules = read_csv(f"{base}/crc_on_treatment_p2_p12_module_reference.csv")
+    summary = json.loads((ROOT / base / "crc_on_treatment_p_response_summary.json").read_text())
+    manifest = json.loads((ROOT / base / "MANIFEST.json").read_text())
 
-    assert summary["target_eval_rows"] == 63
-    assert summary["verified_cleaned_support_rows"] == 191
-    assert summary["strict_release_support_rows"] == 189
-    assert summary["strict_release_support_ncts"] == 114
-    assert summary["exact_drug_leakage_hits"] == 0
-    assert summary["all_support_rows_biomarker_unselected"] is True
-    assert summary["all_support_rows_non_combination"] is True
-    assert summary["support_reasonableness_classes"]["exclude_in_strict_orr_sensitivity"] == 2
-    assert (
-        summary["support_reasonableness_classes"]["optional_exclude_for_confirmed_orr_only"]
-        == 1
-    )
+    assert len(rows) == 11
+    assert len(metrics) == 3
+    assert len(modules) == 5
+    assert "README.md" in manifest
+    assert "predicted_delta_moa_gate_response_probability" not in rows[0]
+    assert summary["boundary"]["uses_measured_on_treatment_state"] is True
+    assert summary["boundary"]["is_pretreatment_prediction_benchmark"] is False
+    assert summary["boundary"]["is_public_crc_rank_score"] is False
 
+    by_readout = {row["readout"]: row for row in metrics}
+    absolute = by_readout["observed_absolute_state_p_response"]
+    delta = by_readout["observed_delta_p_response"]
+    risk = by_readout["observed_signed_moa_risk_adapter"]
 
-def test_atlas_strict_release_metrics() -> None:
-    summary = json.loads(
-        (ROOT / "cohort-level-bench/baseline/results/atlas_orr_summary.json").read_text()
-    )
-    lodo_summary = json.loads(
-        (
-            ROOT / "cohort-level-bench/baseline/results/atlas_orr_lodo_summary.json"
-        ).read_text()
-    )
-    metrics = read_csv("cohort-level-bench/baseline/results/atlas_orr_metrics.csv")
+    assert absolute["direction"] == "PR high"
+    assert round(float(absolute["auc"]), 3) == 0.867
+    assert round(float(absolute["balanced_accuracy"]), 3) == 0.917
+    assert round(float(absolute["pr_mean"]), 4) == 0.6128
+    assert round(float(absolute["sd_mean"]), 4) == 0.3545
 
-    assert summary["target_rows"] == 63
-    assert summary["removed_support_rows"] == 13
-    assert summary["remaining_audited_support_rows"] == 189
-    assert summary["excluded_raw_atlas_row_indices"] == [
-        582,
-        1519,
-        2448,
-        2568,
-        3862,
-        4782,
-        9268,
-        10228,
-        11729,
-        12033,
-        14965,
-        14966,
-        17451,
-    ]
-    assert round(summary["primary_metrics"]["pearson"], 3) == 0.409
-    assert round(summary["primary_metrics"]["spearman"], 3) == 0.464
-    assert round(summary["lodo_spearman_sensitivity"]["pearson"], 3) == 0.292
-    assert round(summary["lodo_spearman_sensitivity"]["spearman"], 3) == 0.419
-    assert lodo_summary["excluded_raw_atlas_row_indices"] == summary[
-        "excluded_raw_atlas_row_indices"
-    ]
+    assert round(float(delta["auc"]), 3) == 0.600
+    assert round(float(delta["balanced_accuracy"]), 3) == 0.533
+    assert risk["direction"] == "SD high"
+    assert round(float(risk["auc"]), 3) == 0.900
 
-    assert metrics[0]["run_id"] == "strict_release_fixed_k8"
-    assert metrics[0]["remaining_audited_support_rows"] == "189"
-    assert metrics[1]["run_id"] == "strict_release_lodo_spearman"
+    by_patient = {row["source_patient_id"]: row for row in rows}
+    assert round(float(by_patient["P2"]["observed_absolute_state_p_response"]), 4) == 0.6180
+    assert round(float(by_patient["P12"]["observed_absolute_state_p_response"]), 4) == 0.3428
+    assert by_patient["P2"]["absolute_state_correct_at_0p5"] == "True"
+    assert by_patient["P12"]["absolute_state_correct_at_0p5"] == "True"
+    assert by_patient["P11"]["absolute_state_correct_at_0p5"] == "False"
 
 
 def test_gaia_public_model_score_rows() -> None:
-    rows = read_csv("cohort-level-bench/model_scores/gaia/gaia_63_model_scores.csv")
-    best_rows = read_csv(
-        "cohort-level-bench/model_scores/gaia/gaia_best_63_model_scores.csv"
+    rows = read_csv("cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv")
+    clinical_rows = read_csv(
+        "cohort-level-bench/clinical_rows/cohort_benchmark_strict44_clinical_rows.csv"
     )
     metrics = read_csv("cohort-level-bench/model_scores/gaia/gaia_metrics.csv")
     summary = json.loads(
@@ -240,96 +231,77 @@ def test_gaia_public_model_score_rows() -> None:
             ROOT / "cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json"
         ).read_text()
     )
-
-    assert len(rows) == 63
-    assert len(best_rows) == 63
-    assert all(row["default_score_column"] == "apoptosis_prevalence_no_prior_score" for row in rows)
-    assert all(row["default_score"] == row["apoptosis_prevalence_no_prior_score"] for row in rows)
-    assert all(
-        row["best_packaged_pearson_score_column"]
-        == "prob_apoptosis_prevalence_orr_gt_20pct"
-        for row in best_rows
-    )
-    assert all(
-        row["best_packaged_spearman_score_column"]
-        == "universal_axis_geomean_response_probability_mean"
-        for row in best_rows
-    )
-    assert all(
-        row["universal_softmin_score_column"]
-        == "universal_axis_softmin_response_probability_mean"
-        for row in best_rows
-    )
-    assert "universal_softmin_response_probability_mean" in best_rows[0]
-    assert summary["target_rows_with_finite_orr_and_default_score"] == 63
-    assert summary["active_default_score_column"] == "apoptosis_prevalence_no_prior_score"
-    assert round(summary["active_default_metrics"]["pearson"], 3) == 0.511
-    assert round(summary["active_default_metrics"]["spearman"], 3) == 0.520
-    assert (
-        summary["best_packaged_63_row_score_by_pearson"]["score_col"]
-        == "prob_apoptosis_prevalence_orr_gt_20pct"
-    )
-    assert round(summary["best_packaged_63_row_score_by_pearson"]["pearson"], 3) == 0.650
-    assert round(summary["best_packaged_63_row_score_by_pearson"]["spearman"], 3) == 0.564
-    assert (
-        summary["best_packaged_63_row_score_by_spearman"]["score_col"]
-        == "universal_axis_geomean_response_probability_mean"
-    )
-    assert round(summary["best_packaged_63_row_score_by_spearman"]["pearson"], 3) == 0.614
-    assert round(summary["best_packaged_63_row_score_by_spearman"]["spearman"], 3) == 0.580
-    assert (
-        summary["universal_softmin_63_row_score"]["score_col"]
-        == "universal_axis_softmin_response_probability_mean"
-    )
-    assert round(summary["universal_softmin_63_row_score"]["pearson"], 3) == 0.646
-    assert round(summary["universal_softmin_63_row_score"]["spearman"], 3) == 0.519
-    assert (
-        summary["universal_softmin_calculation"]["per_patient_formula"]
-        == "min(final axis support values)"
-    )
-    assert (
-        summary["exploratory_label_aware_threshold_sweep_best_by_pearson"]["status"]
-        == "label_aware_sensitivity_not_public_release_score"
-    )
-    assert (
-        round(summary["exploratory_label_aware_threshold_sweep_best_by_pearson"]["pearson"], 3)
-        == 0.659
-    )
-    assert len(summary["candidate_score_columns_in_row_file"]) == 9
-
-    active_metric = next(
-        row for row in metrics if row["score_col"] == "apoptosis_prevalence_no_prior_score"
-    )
-    best_metric = next(
-        row for row in metrics if row["score_col"] == "prob_apoptosis_prevalence_orr_gt_20pct"
-    )
-    softmin_metric = next(
-        row for row in metrics if row["score_col"] == "universal_axis_softmin_response_probability_mean"
-    )
-    assert active_metric["n_orr"] == "63"
-    assert round(float(active_metric["pearson"]), 3) == 0.511
-    assert round(float(active_metric["spearman"]), 3) == 0.520
-    assert best_metric["n_orr"] == "63"
-    assert round(float(best_metric["pearson"]), 3) == 0.650
-    assert round(float(best_metric["spearman"]), 3) == 0.564
-    assert softmin_metric["n_orr"] == "63"
-    assert round(float(softmin_metric["pearson"]), 3) == 0.646
-    assert round(float(softmin_metric["spearman"]), 3) == 0.519
-
-
-def test_gaia_public_audit_logs_are_sanitized() -> None:
-    audit_dir = ROOT / "cohort-level-bench/model_scores/gaia/audit_logs"
-    nominal_rows = read_csv(
-        "cohort-level-bench/model_scores/gaia/audit_logs/"
-        "active_default_input_comparability_nominal_sample_source_split_sanitized.csv"
-    )
-    required_rows = read_csv(
-        "cohort-level-bench/model_scores/gaia/audit_logs/"
-        "active_default_input_comparability_required_inputs.csv"
+    manifest = json.loads(
+        (ROOT / "cohort-level-bench/model_scores/gaia/MANIFEST.json").read_text()
     )
 
-    assert len(nominal_rows) > 0
-    assert len(required_rows) == 4
-    assert "patient_id" not in nominal_rows[0]
-    assert (audit_dir / "active_default_input_comparability_report_excerpt.md").exists()
-    assert not (ROOT / "cohort-level-bench/model_scores/gaia/patient_probabilities.csv").exists()
+    assert len(rows) == 44
+    assert len(clinical_rows) == 44
+    assert all(row["default_score_column"] == "gaia_predicted_orr_pct" for row in rows)
+    assert all(row["default_score"] == row["gaia_predicted_orr_pct"] for row in rows)
+    assert all(row["expected_orr_pct"] == row["gaia_predicted_orr_pct"] for row in rows)
+    assert all(row["label_scope"] == "strict_observed_orr_pair" for row in rows)
+    assert all("gaia_predicted_orr_pct" not in row for row in clinical_rows)
+
+    metric = metrics[0]
+    assert metric["score_col"] == "gaia_predicted_orr_pct"
+    assert metric["n_orr"] == "44"
+    assert round(float(metric["pearson"]), 3) == 0.650
+    assert round(float(metric["spearman"]), 3) == 0.594
+    assert round(float(metric["mae_orr_pct"]), 1) == 10.2
+
+    assert summary["target_rows_with_finite_orr_and_prediction"] == 44
+    assert summary["active_default_score_column"] == "gaia_predicted_orr_pct"
+    assert round(summary["active_default_metrics"]["pearson"], 3) == 0.650
+    assert round(summary["active_default_metrics"]["spearman"], 3) == 0.594
+    assert sorted(manifest) == [
+        "README.md",
+        "gaia_44_strict_orr_model_scores.csv",
+        "gaia_by_disease_metrics.csv",
+        "gaia_metrics.csv",
+        "gaia_model_score_summary.json",
+    ]
+
+
+def test_baseline_metrics_use_44_row_target() -> None:
+    atlas_summary = json.loads(
+        (ROOT / "cohort-level-bench/baseline/results/atlas_orr_summary.json").read_text()
+    )
+    depmap_summary = json.loads(
+        (ROOT / "cohort-level-bench/baseline/results/depmap_orr_summary.json").read_text()
+    )
+    atlas_metrics = read_csv("cohort-level-bench/baseline/results/atlas_orr_metrics.csv")
+    depmap_features = read_csv("cohort-level-bench/baseline/results/depmap_orr_features.csv")
+
+    assert atlas_summary["target_eval_rows"] == 44
+    assert depmap_summary["target_eval_rows"] == 44
+    assert len(depmap_features) == 44
+
+    assert round(atlas_summary["primary_baseline"]["pearson"], 3) == 0.465
+    assert round(atlas_summary["primary_baseline"]["spearman"], 3) == 0.460
+    assert depmap_summary["depmap_covered_rows"] == 40
+    assert round(depmap_summary["primary_baseline"]["pearson"], 3) == -0.014
+    assert round(depmap_summary["primary_baseline"]["spearman"], 3) == -0.044
+
+    assert atlas_metrics[0]["score_col"] == "atlas_mono_disease_therapy_shrink_k8"
+    assert atlas_metrics[0]["n_rows"] == "44"
+    assert len(atlas_metrics) == 1
+    assert "gaia_predicted_orr_pct" not in depmap_features[0]
+    assert "default_score" not in depmap_features[0]
+
+
+def test_methodology_doc_covers_public_release() -> None:
+    methodology = (ROOT / "docs/methodology.md").read_text(encoding="utf-8")
+
+    required_phrases = [
+        "Patient-Level CRC Benchmark",
+        "Patient-Level CRC Observed On-Treatment p_response Readout",
+        "Cohort-Level Gaia ORR Benchmark",
+        "Atlas Fixed `k=8` ORR Baseline",
+        "DepMap ORR Baseline",
+        "Pearson r",
+        "Spearman rho",
+        "This release excludes BioBench",
+    ]
+    for phrase in required_phrases:
+        assert phrase in methodology

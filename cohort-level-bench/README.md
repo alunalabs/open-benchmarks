@@ -1,66 +1,53 @@
 # Cohort-Level Bench
 
-The cohort-level benchmark evaluates drug response at the trial-arm or
-drug-by-disease level. A row represents a production cohort-drug pair with an
-observed objective response rate (ORR) and a model-predicted ORR derived from
-aggregating patient-section response probabilities.
+The cohort-level benchmark evaluates drug response at the drug-by-disease
+level. A row represents a strict observed ORR cohort-drug pair with a Gaia
+predicted ORR percentage.
 
-This benchmark is noisier than patient-level response because it trades
-individual matched outcomes for broader coverage across drugs and diseases. It
-is still useful because it tests whether spatial rollout scores recover
-meaningful differences in response across clinical settings without fitting to
-observed ORR labels.
+The current public cohort target is the 44-row strict ORR set:
 
-## Baselines
-
-The `baseline/` folder contains external-data baselines for the same
-cohort-level ORR surface:
-
-- Atlas ORR prior: exact-drug-excluded, support-shrunk prior response rate from
-  previous trial arms.
-- DepMap ORR sensitivity: GDSC/PRISM drug-sensitivity rank in matched cancer
-  lineages.
-
-The baseline scripts expect raw Atlas and DepMap source tables as local external
-inputs. The tracked result summaries are small release artifacts.
+- [clinical_rows/cohort_benchmark_strict44_clinical_rows.csv](clinical_rows/cohort_benchmark_strict44_clinical_rows.csv)
+- [model_scores/gaia/gaia_44_strict_orr_model_scores.csv](model_scores/gaia/gaia_44_strict_orr_model_scores.csv)
 
 ## Clinical Rows
 
-The `clinical_rows/` folder contains compact cohort benchmark v2 row manifests:
-
-- `cohort_benchmark_v2_clinical_rows.csv`: all 69 cohort-drug rows.
-- `cohort_benchmark_v2_orr_labeled_clinical_rows.csv`: 66 rows with finite ORR
-  labels.
-- `cohort_benchmark_v2_eval_clinical_rows.csv`: 63 evaluation rows with finite
-  ORR labels and finite default scores.
-
-These files preserve clinical labels and row metadata without carrying the full
-model prediction table.
+The clinical-row manifest includes row identifiers, disease/drug metadata,
+broad MOA, therapy family, observed ORR, and evidence links. It excludes Gaia
+score columns.
 
 ## Model Scores
 
-The `model_scores/gaia/` folder contains the reviewed public Gaia
-cohort-model score artifacts:
+The Gaia score artifact includes the same 44 rows plus:
 
-- `gaia_63_model_scores.csv`: all 63 ORR-scored evaluation rows with the
-  active/default Gaia score and candidate score sidecars.
-- `gaia_best_63_model_scores.csv`: focused 63-row table with the active
-  default score, the best packaged Pearson/Spearman sidecars, and the universal
-  softmin sidecar.
-- `gaia_metrics.csv`: global active/candidate metrics.
-- `gaia_by_disease_metrics.csv`: by-disease active/default metrics.
-- `audit_logs/`: compact input-comparability and susceptibility audits.
+- `gaia_predicted_orr_pct`
+- `default_score`
+- `expected_response_pct`
+- `expected_orr_pct`
 
-The active/default Gaia score is `apoptosis_prevalence_no_prior_score`
-with Pearson `0.511` and Spearman `0.520` on the 63 ORR-scored rows.
-The best packaged 63-row Pearson sidecar is
-`prob_apoptosis_prevalence_orr_gt_20pct`, with Pearson `0.650` and Spearman
-`0.564`. The universal softmin sidecar
-`universal_axis_softmin_response_probability_mean` is also included explicitly,
-with Pearson `0.646` and Spearman `0.519`. These are label-aware leaderboard
-summaries across precomputed sidecars, not the active/default release score.
-The softmin sidecar is the cohort-level mean of per-patient
-`min(final axis support values)` probabilities; see
-`docs/universal_softmin_crc_patient_rank_score.md`.
-The full 190-column production prediction table and 1,078-row patient
-probability table are intentionally not included.
+For this release these are continuity aliases for the same predicted ORR
+percentage.
+
+Released metric for `gaia_predicted_orr_pct`:
+
+- Rows: `44`
+- Pearson r: `0.650`
+- Spearman rho: `0.594`
+- Mean absolute ORR gap: `10.2` percentage points
+- AUC above disease median: `0.752`
+
+Only this strict 44-row cohort target is linked in the public release. See
+`../docs/methodology.md` for row construction, metric definitions, and score
+boundaries.
+
+## Baselines
+
+The `baseline/` folder contains external-data baselines recomputed on the same
+44 target rows:
+
+- Atlas ORR prior: exact-drug-excluded, support-shrunk historical ORR from
+  previous Atlas trial arms.
+- DepMap ORR sensitivity: GDSC/PRISM drug-sensitivity rank in matched cancer
+  lineages.
+
+The baseline scripts expect raw Atlas and DepMap source tables as local
+external inputs. The checked-in result summaries are small release artifacts.

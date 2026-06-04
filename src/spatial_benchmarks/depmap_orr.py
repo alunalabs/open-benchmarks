@@ -1,4 +1,4 @@
-"""DepMap drug-sensitivity baselines for cohort benchmark v2 ORR rows."""
+"""DepMap drug-sensitivity baselines for the strict 44-row cohort benchmark."""
 
 from __future__ import annotations
 
@@ -53,6 +53,27 @@ SYNONYMS = {
 }
 
 PRIMARY_DEPMAP_SCORE_COL = "depmap_lineage_sensitivity_rank"
+PUBLIC_DEPMAP_FEATURE_COLUMNS = (
+    "surface_pair_id",
+    "benchmark_row_id",
+    "cohort",
+    "disease",
+    "drug",
+    "drug_norm_clean",
+    "moa_component",
+    "target_therapy_family",
+    "observed_orr_pct",
+    "depmap_lineage",
+    "depmap_screen",
+    "depmap_compound_id",
+    "depmap_lineage_n",
+    "depmap_abs_lineage_auc",
+    "depmap_abs_global_auc",
+    "depmap_lineage_rank",
+    "depmap_lineage_sensitivity_rank",
+    "depmap_lineage_auc_sensitivity",
+    "depmap_global_auc_sensitivity",
+)
 
 
 def norm(value: Any) -> str:
@@ -325,10 +346,14 @@ def calculate_depmap_orr_baseline(
 
 def write_depmap_orr_outputs(result: dict[str, Any], output_dir: str | Path) -> None:
     output = Path(output_dir)
-    write_csv_rows(output / "depmap_v2_63_features.csv", result["features"])
-    write_csv_rows(output / "depmap_v2_63_metrics.csv", result["metrics"])
-    write_json(output / "depmap_v2_63_summary.json", result["summary"])
-    write_methodology_report(output / "depmap_v2_63_methodology.md", result)
+    public_features = [
+        {column: row.get(column, "") for column in PUBLIC_DEPMAP_FEATURE_COLUMNS}
+        for row in result["features"]
+    ]
+    write_csv_rows(output / "depmap_orr_features.csv", public_features)
+    write_csv_rows(output / "depmap_orr_metrics.csv", result["metrics"])
+    write_json(output / "depmap_orr_summary.json", result["summary"])
+    write_methodology_report(output / "depmap_orr_methodology.md", result)
 
 
 def write_methodology_report(path: str | Path, result: dict[str, Any]) -> None:

@@ -7,3 +7,6 @@ Reviewed public patient-level score artifacts.
 
 Clinical-row manifests remain under `patient-level-bench/clinical_rows/` and
 are metadata-only.
+
+Observed on-treatment readout artifacts are not model-score artifacts; they are
+under `patient-level-bench/observed_readouts/`.

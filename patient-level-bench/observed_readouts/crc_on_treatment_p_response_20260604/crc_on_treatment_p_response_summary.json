@@ -1,0 +1,43 @@
+{
+  "benchmark": "crc_observed_on_treatment_p_response_readout",
+  "n_patients": 11,
+  "n_pr": 5,
+  "n_sd": 6,
+  "primary_readout": {
+    "name": "observed_absolute_state_p_response",
+    "score_col": "observed_absolute_state_p_response",
+    "auc_response_high": 0.8666666666666667,
+    "balanced_accuracy_at_0p5": 0.9166666666666667,
+    "pr_mean": 0.6128029345374728,
+    "sd_mean": 0.3544891175746233,
+    "true_pr_called_pr": 5,
+    "sd_called_sd": 5,
+    "missed_patient": "P11"
+  },
+  "delta_comparator": {
+    "name": "observed_delta_p_response",
+    "auc_response_high": 0.6,
+    "balanced_accuracy_at_0p5": 0.5333333333333333,
+    "pr_mean": 0.3181010958399086,
+    "sd_mean": 0.2675909942351371
+  },
+  "secondary_signed_risk_adapter": {
+    "name": "observed_signed_moa_risk_adapter",
+    "auc_sd_high": 0.9,
+    "balanced_accuracy_at_zero": 0.8166666666666667,
+    "pr_mean_risk": -0.7324763788977668,
+    "sd_mean_risk": 1.1864254220473975,
+    "note": "Strong aggregate observed on-treatment risk separation, but not the p_response explainer; it calls P12 responder-like."
+  },
+  "p2_p12_reference": {
+    "p2_observed_absolute_state_p_response": 0.6179845901520555,
+    "p12_observed_absolute_state_p_response": 0.3428445077289779,
+    "module_reference_file": "crc_on_treatment_p2_p12_module_reference.csv"
+  },
+  "boundary": {
+    "uses_measured_on_treatment_state": true,
+    "is_pretreatment_prediction_benchmark": false,
+    "is_public_crc_rank_score": false,
+    "intended_use": "Observed-state module-panel validation and P2/P12 explainer support."
+  }
+}

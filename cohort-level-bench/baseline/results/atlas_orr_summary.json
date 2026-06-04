@@ -1,10 +1,6 @@
 {
-  "atlas_rows_after_real_therapy_filter": 9638,
-  "atlas_rows_raw_after_removal": 21022,
-  "baseline_id": "cohort_level_atlas_orr_strict_release",
-  "benchmark_surface": "cohort_benchmark_v2",
-  "cleaning_rule": "Use the unfiltered raw Atlas source and remove 13 reviewed raw Atlas row indices: 3 CTGov value mismatches, 8 no-matching-ORR rows, and 2 CTGov-verified endpoint caveats that are not strict CR/PR ORR. Then recompute the fixed k=8 prior.",
-  "ctgov_verified_support_rows_before_endpoint_review": 191,
+  "atlas_rows_with_model_orr_after_real_therapy_filter": 9638,
+  "excluded_raw_atlas_row_count": 13,
   "excluded_raw_atlas_row_indices": [
     582,
     1519,
@@ -20,38 +16,49 @@
     14966,
     17451
   ],
-  "lodo_note": "Leave-disease-out k tuning uses labels only in non-held-out diseases to select k; held-out disease labels are never used for that disease. It is reported as an overfit sensitivity check, not the release primary baseline.",
-  "lodo_spearman_sensitivity": {
-    "auc_above_disease_median": 0.6962474645030426,
-    "mae_orr_pct": 12.571540827002169,
-    "pearson": 0.2922530219385001,
-    "rmse_orr_pct": 14.869602960501858,
-    "spearman": 0.41904800475244997
+  "methodology": {
+    "endpoint": "model_orr_pct",
+    "exact_drug_exclusion": "atlas arms mentioning the target drug or alias are removed per target row",
+    "overfit_boundary": "primary k=8 is fixed and not optimized on target labels; observed ORR is used only for evaluation metrics",
+    "prediction_inputs_not_used": [
+      "target observed ORR label",
+      "Gaia score",
+      "tumor biology or patient-level features",
+      "exact target drug Atlas arms",
+      "DepMap features",
+      "fitted model over the target rows"
+    ],
+    "prediction_inputs_used": [
+      "target disease/cohort key",
+      "target therapy family derived from broad MOA",
+      "historical Atlas model_orr_pct",
+      "Atlas orr_denom weights when available",
+      "Atlas tissue, therapy class, monotherapy flag, biomarker flag, line bucket, and arm text for filtering"
+    ],
+    "primary_filter": "all-comer monotherapy: is_combination != true and biomarker != yes",
+    "primary_formula": "n/(n+8) * disease_therapy_ORR + 8/(n+8) * global_therapy_ORR; falls back to the predefined hierarchy when either cell is unavailable",
+    "weighting": "weighted mean ORR by orr_denom when available; otherwise weight 1"
   },
-  "method": "Exact-drug-excluded Atlas disease x therapy-family support-shrunk prior. The primary fixed k=8 score is not tuned on target labels.",
-  "optional_unconfirmed_orr_excluded_from_primary": false,
-  "optional_unconfirmed_orr_row_indices": [
-    7251
-  ],
-  "primary_metrics": {
-    "auc_above_disease_median": 0.742393509127789,
-    "mae_orr_pct": 11.585763458480809,
-    "mean_observed_orr": 12.317005419577614,
-    "mean_prediction": 17.657457610636836,
-    "pearson": 0.40930170068419885,
-    "rmse_orr_pct": 13.19321892673628,
-    "spearman": 0.46404726822364617,
-    "within_disease_pair_pearson": 0.36574325599321444,
-    "within_disease_pair_spearman": 0.30710941269242326,
-    "within_disease_pairs": 269
+  "primary_baseline": {
+    "auc_above_disease_median": 0.7283057851239669,
+    "label": "atlas_mono_disease_therapy_shrink_k8",
+    "mae_orr_pct": 11.260271723775242,
+    "mean_observed_orr": 13.034090909090908,
+    "mean_prediction": 16.971575121226195,
+    "n_rows": 44,
+    "pearson": 0.46491446729880376,
+    "rmse_orr_pct": 12.970360103314263,
+    "score_col": "atlas_mono_disease_therapy_shrink_k8",
+    "spearman": 0.4602344791806983,
+    "within_disease_pair_pearson": 0.3242605613487553,
+    "within_disease_pair_spearman": 0.2607261079521433,
+    "within_disease_pairs": 198
   },
-  "primary_score_col": "atlas_mono_disease_therapy_shrink_k8",
-  "remaining_audited_support_rows": 189,
-  "removed_status_counts": {
-    "ctgov_no_matching_orr_measurement": 8,
-    "ctgov_value_mismatch": 3,
-    "ctgov_verified_non_strict_orr_endpoint": 2
+  "primary_source_counts": {
+    "disease_baseline": 24,
+    "disease_therapy": 7,
+    "global_therapy": 13
   },
-  "removed_support_rows": 13,
-  "target_rows": 63
+  "surface_score_col": "gaia_predicted_orr_pct",
+  "target_eval_rows": 44
 }

@@ -1,17 +1,13 @@
 # Cohort-Level Clinical Rows
 
-This folder contains compact cohort-level clinical-row manifests for cohort
-benchmark v2.
+This folder contains the public 44-row strict ORR cohort clinical-row manifest.
 
-Files:
+File:
 
-- `cohort_benchmark_v2_clinical_rows.csv`: all 69 cohort-drug rows in the
-  production v2 surface.
-- `cohort_benchmark_v2_orr_labeled_clinical_rows.csv`: 66 rows with finite ORR
-  labels.
-- `cohort_benchmark_v2_eval_clinical_rows.csv`: 63 rows with finite ORR labels
-  and finite default scores; this is the evaluation surface used for the
-  reported cohort-level ORR correlations and Atlas/DepMap baselines.
+- [cohort_benchmark_strict44_clinical_rows.csv](cohort_benchmark_strict44_clinical_rows.csv):
+  44 strict observed ORR
+  cohort-drug pairs used by the released cohort-level ORR score and baselines.
 
-These files include clinical label and row metadata only. They do not include
-model score, patient-probability, or full prediction columns.
+The file includes row identifiers, disease/drug metadata, broad MOA, therapy
+family, observed ORR, and evidence links. It does not include Gaia score,
+patient-probability, or full prediction columns.

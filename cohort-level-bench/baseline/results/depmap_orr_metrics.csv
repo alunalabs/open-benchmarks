@@ -1,4 +1,4 @@
-label,score_col,n_rows,pearson,spearman,within_disease_pair_pearson,within_disease_pair_spearman,within_disease_pairs,auc_above_disease_median,mae_orr_pct,rmse_orr_pct,mean_prediction,mean_observed_orr,role
-depmap_lineage_sensitivity_rank,depmap_lineage_sensitivity_rank,55,-0.06738899532552244,-0.06236571087103533,-0.04014744077250753,-0.05309093774927746,217,0.4746666666666667,,,0.4829555759855922,12.368154230035755,primary_baseline
-depmap_global_auc_sensitivity,depmap_global_auc_sensitivity,55,-0.06957931971448095,-0.04527449066847669,-0.15261889127116618,-0.19195086078032247,217,0.4226666666666667,,,-0.8141527977948457,12.368154230035755,secondary_comparator
-depmap_lineage_auc_sensitivity,depmap_lineage_auc_sensitivity,55,-0.08235225428132142,-0.05622308581421261,-0.15743756508157747,-0.19329738011545505,217,0.4226666666666667,,,-0.8269187512581789,12.368154230035755,secondary_comparator
+label,score_col,n_rows,pearson,spearman,within_disease_pair_pearson,within_disease_pair_spearman,within_disease_pairs,auc_above_disease_median,mae_orr_pct,rmse_orr_pct,mean_prediction,mean_observed_orr
+depmap_lineage_sensitivity_rank,depmap_lineage_sensitivity_rank,40,-0.013645548168619076,-0.04384043636775361,-0.010528028246118797,-0.016696187721387888,171,0.47368421052631576,nan,nan,0.471926743851081,13.745
+depmap_lineage_auc_sensitivity,depmap_lineage_auc_sensitivity,40,-0.021444987536273233,-0.015052510340859608,-0.13628260234358647,-0.17388012074250686,171,0.47368421052631576,nan,nan,-0.8288786083270319,13.745
+depmap_global_auc_sensitivity,depmap_global_auc_sensitivity,40,-0.0270688921120981,0.001931958638124427,-0.1419129645989296,-0.18602567791493332,171,0.4849624060150376,nan,nan,-0.8106778417690604,13.745

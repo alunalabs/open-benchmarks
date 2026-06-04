@@ -76,5 +76,5 @@ depends on the other patients in this 11-patient CRC panel. Non-default
 raw/probability score columns and source isotonic apparent calibration columns
 are excluded from this public table.
 
-See `docs/universal_softmin_crc_patient_rank_score.md` for the relationship
-between this patient rank score and the cohort universal softmin sidecar.
+See `docs/universal_softmin_crc_patient_rank_score.md` and
+`docs/methodology.md` for the calculation and release boundary.
