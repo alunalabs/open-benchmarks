@@ -1,0 +1,42 @@
+{
+  "benchmark": "crc_module_mean_cosine_readout",
+  "metric": "module_mean_cosine",
+  "calculation": {
+    "definition": "For each patient and cascade step, average predicted and observed gene deltas within each response module, then compute cosine between the six-dimensional module-mean vectors.",
+    "module_count": 6,
+    "scoring_genes_present": 41,
+    "observed_delta": "tumor on-treatment mean logCP10k minus tumor pretreatment mean logCP10k",
+    "predicted_delta": "v13.1b visible_persistent cascade predicted_delta_logcp10k"
+  },
+  "boundary": {
+    "uses_measured_on_treatment_delta": true,
+    "is_pretreatment_prediction_benchmark": false,
+    "is_public_crc_rank_score": false,
+    "is_public_crc_cosine_readout": true,
+    "intended_use": "Public cosine readout for cascade-to-observed tumor program alignment."
+  },
+  "n_patients": 11,
+  "cascade_steps": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "baseline_step": 1,
+  "best_mean_step": 4,
+  "step1_mean": -0.1062355130668692,
+  "step4_mean": 0.3043933180703332,
+  "step4_median": 0.561219230644728,
+  "step4_pr_mean": 0.5217691867186203,
+  "step4_sd_mean": 0.1232467608634273,
+  "step4_pr_high_auc": 0.6333333333333333,
+  "files": {
+    "step_summary": "crc_module_mean_cosine_step_summary.csv",
+    "patient_steps": "crc_module_mean_cosine_patient_steps.csv",
+    "module_vectors": "crc_module_mean_cosine_module_vectors.csv"
+  }
+}

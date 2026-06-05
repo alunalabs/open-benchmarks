@@ -31,7 +31,12 @@ Public artifacts:
 - `patient-level-bench/clinical_rows/crc_patient_clinical_rows_20260525.csv`
 - `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_rank_scores_20260525.csv`
 - `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_metrics_20260525.csv`
-- `patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604/crc_on_treatment_p_response_readout_metrics.csv`
+- `patient-level-bench/model_scores/crc_moa_tailored_20260525/reproduce_crc_moa_tailored_rank_score.py`
+- `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/cscc_checkpoint_compartment_patient_scores_20260604.csv`
+- `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/cscc_checkpoint_compartment_metrics_20260604.csv`
+- `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/reproduce_cscc_checkpoint_compartment.py`
+- `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_step_summary.csv`
+- `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/reproduce_crc_module_mean_cosine.py`
 
 The public CRC score is `response_score_rank_calibrated`. It summarizes
 KRAS/MAPK, EGFR, cytostasis, escape-control, and kill-conversion module
@@ -48,13 +53,23 @@ Released CRC metrics:
 See `docs/methodology.md` and
 `docs/universal_softmin_crc_patient_rank_score.md` for the calculation.
 
-Observed on-treatment p_response readout:
+cSCC checkpoint compartment score:
+
+- Rows: `12`
+- AUC response high: `0.944`
+- Spearman rho: `0.772`
+- Boundary: relative p_response ranking score over compartment-specific
+  checkpoint axes; not a calibrated clinical ORR probability.
+
+Module mean cosine readout:
 
 - Rows: `11`
-- AUC PR-high: `0.867`
-- Fixed 0.5 balanced accuracy: `0.917`
-- Boundary: uses measured on-treatment tissue state; not a pretreatment
-  prediction benchmark.
+- Best mean step: `4`
+- Step 1 mean: `-0.106`
+- Step 4 mean: `0.304`
+- Boundary: compares cascade predicted tumor program deltas against measured
+  tumor on-treatment minus pretreatment deltas; not a pretreatment prediction
+  benchmark.
 
 ## Cohort-Level Bench
 
@@ -73,6 +88,7 @@ Public artifacts:
 - [cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv](cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv)
 - [cohort-level-bench/model_scores/gaia/gaia_metrics.csv](cohort-level-bench/model_scores/gaia/gaia_metrics.csv)
 - [cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json](cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json)
+- [cohort-level-bench/model_scores/gaia/reproduce_gaia_metrics.py](cohort-level-bench/model_scores/gaia/reproduce_gaia_metrics.py)
 
 The public cohort score is `gaia_predicted_orr_pct`, evaluated directly against
 `orr_pct`.
@@ -97,6 +113,8 @@ Baseline scripts and checked-in 44-row results live under
 Atlas ORR prior:
 
 - Script: `cohort-level-bench/baseline/atlas_orr_baseline.py`
+- Reproduction script: `cohort-level-bench/baseline/reproduce_atlas_orr_results.py`
+- Row predictions: `cohort-level-bench/baseline/results/atlas_orr_predictions.csv`
 - Results: `cohort-level-bench/baseline/results/atlas_orr_metrics.csv`
 - Primary score: `atlas_mono_disease_therapy_shrink_k8`
 - Target rows: `44`
@@ -112,6 +130,7 @@ model over the target rows.
 DepMap drug sensitivity:
 
 - Script: `cohort-level-bench/baseline/depmap_orr_baseline.py`
+- Reproduction script: `cohort-level-bench/baseline/reproduce_depmap_orr_results.py`
 - Results: `cohort-level-bench/baseline/results/depmap_orr_metrics.csv`
 - Primary score: `depmap_lineage_sensitivity_rank`
 - Target rows: `44`
@@ -143,6 +162,15 @@ python cohort-level-bench/baseline/atlas_orr_baseline.py \
   --surface-score-column gaia_predicted_orr_pct \
   --strict-release-cleaning
 ```
+
+Run every no-external-data release metric reproduction check:
+
+```bash
+python scripts/reproduce_release_scores.py
+```
+
+The reproducibility notebooks are under `notebooks/`. They load the same
+checked-in score artifacts and recompute the displayed metrics.
 
 Run the DepMap baseline:
 

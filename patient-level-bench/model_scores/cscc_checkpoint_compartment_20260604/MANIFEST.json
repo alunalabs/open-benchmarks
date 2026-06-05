@@ -1,0 +1,22 @@
+{
+  "README.md": {
+    "bytes": 2291,
+    "sha256": "55066874f3d99c7e58b9f1c1e9153c3133361565b019adfcd8b1cbeae96a817e"
+  },
+  "cscc_checkpoint_compartment_metrics_20260604.csv": {
+    "bytes": 372,
+    "sha256": "3e62a7332f11c9825df40a01c61b763ea6fb4d4c9d12d4ba0d7ab83dfd054f84"
+  },
+  "cscc_checkpoint_compartment_patient_scores_20260604.csv": {
+    "bytes": 9389,
+    "sha256": "301596a53de0cdabb5438205beceaaae6262c58ddaaaf41a776d8f25f0d2ff69"
+  },
+  "cscc_checkpoint_compartment_summary.json": {
+    "bytes": 1795,
+    "sha256": "26e4dd3e940c5443e78a6e16a277438be7cc4d117e4dc5854bb892b63a8f2d71"
+  },
+  "reproduce_cscc_checkpoint_compartment.py": {
+    "bytes": 839,
+    "sha256": "49f82d2f565228cc653cf7dcdf66287ea867efe70f9487c666bd0e9cf537310f"
+  }
+}

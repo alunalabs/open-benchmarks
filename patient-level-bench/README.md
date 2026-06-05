@@ -9,7 +9,7 @@ probability columns are intentionally omitted from those row files.
 
 Reviewed model-score artifacts live under `model_scores/`.
 Observed readout artifacts live under `observed_readouts/`; these use measured
-on-treatment state and are not pretreatment prediction benchmarks.
+on-treatment tissue deltas and are not pretreatment prediction benchmarks.
 
 ## CRC MOA-Tailored Rank Score
 
@@ -31,17 +31,32 @@ responder. This score is panel-relative, not an absolute response probability.
 See `docs/universal_softmin_crc_patient_rank_score.md` and
 `docs/methodology.md` for the full formula and release boundary.
 
-## CRC Observed On-Treatment p_response Readout
+## cSCC Checkpoint Compartment Score
 
-`observed_readouts/crc_on_treatment_p_response_20260604/` contains a compact
-observed-state readout artifact for 11 CRC on-treatment samples:
+`model_scores/cscc_checkpoint_compartment_20260604/` contains the public cSCC
+patient-level checkpoint response artifact:
 
-- Primary readout: observed absolute-state p_response.
-- AUC PR-high: `0.867`.
-- Fixed 0.5 balanced accuracy: `0.917`.
-- Calls all `5/5` PR patients correctly and `5/6` SD patients correctly; the
-  miss is `P11`.
+- 12 cSCC checkpoint-treated patient rows.
+- Default score: `relative_response_probability`.
+- Default metrics: AUC response high `0.944`, Spearman response high `0.772`.
 
-The observed delta p_response comparator is weaker: AUC `0.600`, balanced
-accuracy `0.533`. This supports the interpretation that the panel works best as
-an on-treatment state readout rather than a pre-to-on delta readout.
+The score keeps the universal response-axis product shape used by the CRC
+patient and cohort benchmarks, but routes checkpoint biology to the validated
+compartments: immune-primary cells for engagement, response conversion,
+coverage, and escape/refuge control; epithelial cells for resistant-tail
+control. This is a relative p_response ranking score, not a calibrated clinical
+ORR probability.
+
+## CRC Module Mean Cosine Readout
+
+`observed_readouts/crc_module_mean_cosine_20260604/` contains a compact
+module-cosine artifact for 11 CRC patients:
+
+- Primary readout: `module_mean_cosine`.
+- Best mean step: `4`.
+- Step 1 mean: `-0.106`.
+- Step 4 mean: `0.304`.
+
+The calculation averages predicted and observed gene deltas within each scoring
+module, then computes cosine similarity across the resulting module-mean
+vectors. This is a program-alignment readout, not a direct responder classifier.

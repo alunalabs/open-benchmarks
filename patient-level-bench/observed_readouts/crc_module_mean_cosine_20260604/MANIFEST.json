@@ -1,0 +1,26 @@
+{
+  "README.md": {
+    "bytes": 2677,
+    "sha256": "af6c5fc88477d1cd6e78200c2e5801805dd0148efdf88f2c9e99ca1cce2400a0"
+  },
+  "crc_module_mean_cosine_module_vectors.csv": {
+    "bytes": 50813,
+    "sha256": "b11aad2fc48aa0c0bcf3e9685aa27c64e18eb11b42e0f1bcce22777b164def96"
+  },
+  "crc_module_mean_cosine_patient_steps.csv": {
+    "bytes": 5983,
+    "sha256": "099c0e2c0ad7e889a0ea8096f7f37bc3bb36c3165cf24a650689f540c605e30b"
+  },
+  "crc_module_mean_cosine_step_summary.csv": {
+    "bytes": 1528,
+    "sha256": "40a91cde5eb559fb261eb9dbb57ac53498040f720abe7c86621872ffb09fffa2"
+  },
+  "crc_module_mean_cosine_summary.json": {
+    "bytes": 1425,
+    "sha256": "df25398a715d65af4e9801399c140f1eecc263f21e091149a3a48895e86e00b7"
+  },
+  "reproduce_crc_module_mean_cosine.py": {
+    "bytes": 899,
+    "sha256": "46fc337055b90e76fd6a6269cd390c0c4d25049288d9009ad7a09268455f0c8c"
+  }
+}

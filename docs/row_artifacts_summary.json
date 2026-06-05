@@ -2,6 +2,7 @@
   "cohort_level": {
     "atlas_fixed_k8_pearson": 0.46491446729880376,
     "atlas_fixed_k8_spearman": 0.4602344791806983,
+    "atlas_orr_prediction_rows": 44,
     "cohort_benchmark_strict44_clinical_rows": 44,
     "depmap_covered_rows": 40,
     "depmap_primary_pearson": -0.013645548168619076,
@@ -17,13 +18,19 @@
     "crc_moa_tailored_default_fixed_0p5_balanced_accuracy": 0.7333333333333334,
     "crc_moa_tailored_default_score_column": "response_score_rank_calibrated",
     "crc_moa_tailored_rank_score_rows": 11,
-    "crc_on_treatment_p_response_absolute_state_auc": 0.8666666666666667,
-    "crc_on_treatment_p_response_absolute_state_balanced_accuracy": 0.9166666666666667,
-    "crc_on_treatment_p_response_delta_auc": 0.6,
-    "crc_on_treatment_p_response_patient_rows": 11,
-    "crc_on_treatment_signed_risk_adapter_auc_sd_high": 0.9,
+    "cscc_checkpoint_compartment_auc_response_high": 0.9444444444444444,
+    "cscc_checkpoint_compartment_default_score_column": "relative_response_probability",
+    "cscc_checkpoint_compartment_patient_score_rows": 12,
+    "cscc_checkpoint_compartment_spearman_response_high": 0.7724872793364281,
+    "crc_module_mean_cosine_patient_step_rows": 88,
+    "crc_module_mean_cosine_module_vector_rows": 528,
+    "crc_module_mean_cosine_best_step": 4,
+    "crc_module_mean_cosine_step1_mean": -0.10623551306686925,
+    "crc_module_mean_cosine_step4_mean": 0.3043933180703331,
+    "crc_module_mean_cosine_step4_pr_mean": 0.5217691867186203,
+    "crc_module_mean_cosine_step4_sd_mean": 0.12324676086342727,
     "crc_patient_clinical_rows": 11,
     "universal_patient_response_axes_clinical_rows": 23
   },
-  "policy": "Clinical row manifests include benchmark row identifiers and labels/metadata only. The reviewed patient-level CRC model-score folder includes a compact 11-row rank-score table. The reviewed cohort Gaia model-score folder includes the 44-row strict ORR score table and matching Atlas/DepMap baseline summaries."
+  "policy": "Clinical row manifests include benchmark row identifiers and labels/metadata only. The reviewed patient-level CRC model-score folder includes a compact 11-row rank-score table. The reviewed cohort Gaia model-score folder includes the 44-row strict ORR score table and matching Atlas/DepMap baseline summaries. Reproduce scripts and notebooks recompute metrics from the checked-in release score artifacts; private checkpoints, raw spatial data, and raw Atlas/DepMap source matrices remain external."
 }

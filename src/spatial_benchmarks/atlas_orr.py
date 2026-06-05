@@ -154,6 +154,27 @@ ATLAS_TEXT_COLUMNS = (
 PRIMARY_SCORE_COL = "atlas_mono_disease_therapy_shrink_k8"
 LEGACY_PRIMARY_SCORE_COL = "atlas_mono_allcomer_hierarchical_prior_therapy_first_orr"
 SHRINKAGE_K_VALUES = (8,)
+PUBLIC_ATLAS_PREDICTION_COLUMNS = (
+    "surface_pair_id",
+    "benchmark_row_id",
+    "cohort",
+    "disease",
+    "drug",
+    "drug_norm_clean",
+    "moa_component",
+    "target_therapy_family",
+    "observed_orr_pct",
+    PRIMARY_SCORE_COL,
+    "atlas_mono_allcomer_hierarchical_prior_therapy_first_source",
+    "atlas_mono_allcomer_hierarchical_prior_therapy_first_orr",
+    "atlas_mono_allcomer_hierarchical_prior_therapy_first_n_arms",
+    "atlas_mono_allcomer_prior_disease_therapy_orr",
+    "atlas_mono_allcomer_prior_disease_therapy_n_arms",
+    "atlas_mono_allcomer_prior_global_therapy_orr",
+    "atlas_mono_allcomer_prior_global_therapy_n_arms",
+    "excluded_exact_drug_atlas_arms",
+    "target_atlas_tissues",
+)
 CTGOV_AUDIT_EXCEPTION_ATLAS_ROW_INDICES = (
     582,
     1519,
@@ -785,7 +806,11 @@ def calculate_atlas_orr_baseline(
 
 def write_atlas_orr_outputs(result: dict[str, Any], output_dir: str | Path) -> None:
     output = Path(output_dir)
-    write_csv_rows(output / "atlas_orr_predictions.csv", result["predictions"])
+    public_predictions = [
+        {column: row.get(column, "") for column in PUBLIC_ATLAS_PREDICTION_COLUMNS}
+        for row in result["predictions"]
+    ]
+    write_csv_rows(output / "atlas_orr_predictions.csv", public_predictions)
     write_csv_rows(output / "atlas_orr_support_cells.csv", result["support_cells"])
     write_csv_rows(output / "atlas_orr_metrics.csv", result["metrics"])
     write_csv_rows(output / "atlas_orr_baseline_cells.csv", result["baseline_cells"])

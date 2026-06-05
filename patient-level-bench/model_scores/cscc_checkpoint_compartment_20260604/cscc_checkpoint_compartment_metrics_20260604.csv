@@ -1,0 +1,2 @@
+axis_variant,mode,cascade_step,n_patients,n_responders,n_nonresponders,auc_response_high,spearman_response_high,response_mean,nonresponse_mean,response_minus_nonresponse,mean_probability
+checkpoint_compartment_default_v1,visible_persistent,4,12,6,6,0.9444444444444444,0.7724872793364281,0.040835652074511834,0.005001323077563144,0.03583432899694869,0.022918487576037493

@@ -42,6 +42,53 @@ def pearson(xs: Iterable[Any], ys: Iterable[Any]) -> float:
     return cov / math.sqrt(x_ss * y_ss)
 
 
+def cosine(xs: Iterable[Any], ys: Iterable[Any]) -> float:
+    pairs = finite_pairs(xs, ys)
+    if len(pairs) < 2:
+        return math.nan
+    x_values = [x for x, _ in pairs]
+    y_values = [y for _, y in pairs]
+    x_norm = math.sqrt(sum(x * x for x in x_values))
+    y_norm = math.sqrt(sum(y * y for y in y_values))
+    denom = x_norm * y_norm
+    if denom <= 0.0:
+        return math.nan
+    return sum(x * y for x, y in pairs) / denom
+
+
+def module_mean_cosine(
+    rows: Iterable[Mapping[str, Any]],
+    *,
+    module_col: str = "module",
+    predicted_col: str = "module_predicted_delta",
+    observed_col: str = "module_observed_delta",
+) -> float:
+    """Cosine after averaging predicted and observed values within modules."""
+
+    by_module: dict[str, dict[str, list[float]]] = defaultdict(
+        lambda: {"predicted": [], "observed": []}
+    )
+    for row in rows:
+        module = str(row.get(module_col, ""))
+        predicted = finite_float(row.get(predicted_col))
+        observed = finite_float(row.get(observed_col))
+        if not module or not math.isfinite(predicted) or not math.isfinite(observed):
+            continue
+        by_module[module]["predicted"].append(predicted)
+        by_module[module]["observed"].append(observed)
+
+    predicted_means: list[float] = []
+    observed_means: list[float] = []
+    for module in sorted(by_module):
+        predicted_values = by_module[module]["predicted"]
+        observed_values = by_module[module]["observed"]
+        if predicted_values and observed_values:
+            predicted_means.append(sum(predicted_values) / len(predicted_values))
+            observed_means.append(sum(observed_values) / len(observed_values))
+
+    return cosine(predicted_means, observed_means)
+
+
 def rankdata(values: Sequence[float]) -> list[float]:
     """Average ranks, 1-indexed, with ties handled like scipy.stats.rankdata."""
 

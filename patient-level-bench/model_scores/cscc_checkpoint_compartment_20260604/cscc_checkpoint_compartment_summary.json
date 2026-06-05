@@ -1,0 +1,42 @@
+{
+  "axis_contract_version": "cscc_compartment_specific_checkpoint_axes_v1",
+  "axis_source_map": {
+    "coverage_support": "immune_primary_cells",
+    "engagement_support": "immune_primary_cells",
+    "escape_refuge_control": "immune_primary_cells",
+    "resistant_tail_control": "epithelial",
+    "response_conversion_support": "immune_primary_cells"
+  },
+  "base_axis_contract_version": "cscc_immune_primary_predicted_delta_universal_axes_v1",
+  "benchmark_id": "cscc_patient_checkpoint",
+  "boundary": {
+    "full_axis_source_screen_excluded_from_public_table": true,
+    "is_absolute_clinical_orr_probability": false,
+    "is_public_cscc_checkpoint_compartment_score": true,
+    "uses_clinical_labels_for_probability_assignment": false,
+    "uses_drug_prior": false,
+    "uses_patient_labels_for_default_probability_assignment": false,
+    "uses_z_scores": false
+  },
+  "cascade_step": 4,
+  "default_metrics": {
+    "auc_response_high": 0.9444444444444444,
+    "mean_probability": 0.022918487576037493,
+    "nonresponse_mean": 0.005001323077563144,
+    "response_mean": 0.040835652074511834,
+    "response_minus_nonresponse": 0.03583432899694869,
+    "spearman_response_high": 0.7724872793364281
+  },
+  "default_risk_score_column": "nonresponse_probability",
+  "default_score_column": "relative_response_probability",
+  "mode": "visible_persistent",
+  "n_nonresponders": 6,
+  "n_patients": 12,
+  "n_responders": 6,
+  "policy_id": "cscc_compartment_specific_checkpoint_axes_v1",
+  "public_files": {
+    "metrics": "cscc_checkpoint_compartment_metrics_20260604.csv",
+    "patient_scores": "cscc_checkpoint_compartment_patient_scores_20260604.csv"
+  },
+  "score_formula": "engagement_support * response_conversion_support * coverage_support * resistant_tail_control * escape_refuge_control"
+}

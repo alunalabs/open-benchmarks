@@ -1,6 +1,0 @@
-group,module,genes,p2_module_support,p12_module_support
-MOA-specific axes · this regimen,KRAS–MAPK output,DUSP6|SPRY2|SPRY4|ETV4|ETV5|PHLDA1,0.179,-0.016
-MOA-specific axes · this regimen,EGFR engagement,EGFR|ERBB2|ERBB3|AREG|EREG|TGFA,0.1,-0.096
-Tumor-fitness programs,Apoptosis · kill-conversion,BAX|BAK1|CASP3|CASP7|BBC3|PMAIP1,0.089,0.031
-Tumor-fitness programs,Proliferation shutdown · cytostasis,MKI67|TOP2A|PCNA|CCNB1|CDK1|MCM2,0.12,0.054
-Tumor-fitness programs,RTK-bypass escape · resistance,MET|AXL|FGFR1|IGF1R|PDGFRB|RET,-0.011,-0.28

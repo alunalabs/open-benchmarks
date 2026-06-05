@@ -12,6 +12,8 @@ for the 2026-05-25 MOA-tailored response distribution.
   default calibrated rank score.
 - `crc_patient_moa_tailored_summary.json`: machine-readable calculation and
   release summary.
+- `reproduce_crc_moa_tailored_rank_score.py`: recompute the released rank score
+  and metrics from the checked-in score CSV.
 - `MANIFEST.json`: byte sizes and SHA-256 checksums for this folder.
 
 ## Default Score
@@ -78,3 +80,9 @@ are excluded from this public table.
 
 See `docs/universal_softmin_crc_patient_rank_score.md` and
 `docs/methodology.md` for the calculation and release boundary.
+
+## Reproduce
+
+```bash
+python patient-level-bench/model_scores/crc_moa_tailored_20260525/reproduce_crc_moa_tailored_rank_score.py
+```

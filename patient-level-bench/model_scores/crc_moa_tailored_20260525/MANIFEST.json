@@ -1,7 +1,7 @@
 {
   "README.md": {
-    "bytes": 2335,
-    "sha256": "1d0b86f61b8b6477e90a4cf9c937d56be80ba55ad51a414b80f1c293c6233d2a"
+    "bytes": 2594,
+    "sha256": "f4d26113d6484952ec1e4b23985a05687313572cc865752ddb52b13c4e987f53"
   },
   "crc_patient_moa_tailored_metrics_20260525.csv": {
     "bytes": 631,
@@ -14,5 +14,9 @@
   "crc_patient_moa_tailored_summary.json": {
     "bytes": 2899,
     "sha256": "0666aa2a75d3a5a07c502de121433c40ac28fef6b24fbebe05cee70934a087b9"
+  },
+  "reproduce_crc_moa_tailored_rank_score.py": {
+    "bytes": 832,
+    "sha256": "116c87f2c059464956b7782dfd60e20799db2874ec85b12da0e529fd00844989"
   }
 }

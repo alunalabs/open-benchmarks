@@ -8,8 +8,10 @@ This document is the public methodology contract for the current
 This release includes:
 
 - Patient-level CRC response benchmark: 11 pretreatment CRC patient rows.
-- Patient-level CRC observed on-treatment p_response readout: 11 measured
-  on-treatment CRC patient rows.
+- Patient-level cSCC checkpoint response benchmark: 12 pretreatment cSCC
+  patient rows.
+- Patient-level CRC module mean cosine readout: 11 CRC patients across
+  cascade steps 1-8.
 - Cohort-level ORR benchmark: 44 strict observed ORR cohort-drug rows.
 - Cohort-level baselines: Atlas fixed `k=8` ORR prior and DepMap lineage
   sensitivity on the same 44 target rows.
@@ -17,6 +19,12 @@ This release includes:
 This release excludes BioBench, full production prediction tables,
 patient-probability tables, raw spatial data, raw Atlas curation tables, and
 raw DepMap matrices.
+
+The public model artifacts in this repository are checked-in score CSVs and
+baseline feature/prediction CSVs. Private model checkpoints, raw per-cell
+outputs, and source raw Atlas/DepMap matrices are external. Folder-local
+`reproduce_*.py` scripts and notebooks under `notebooks/` recompute the public
+metrics from the checked-in release artifacts.
 
 ## Shared Metrics
 
@@ -50,6 +58,7 @@ Artifacts:
 - `patient-level-bench/clinical_rows/crc_patient_clinical_rows_20260525.csv`
 - `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_rank_scores_20260525.csv`
 - `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_metrics_20260525.csv`
+- `patient-level-bench/model_scores/crc_moa_tailored_20260525/reproduce_crc_moa_tailored_rank_score.py`
 
 Rows:
 
@@ -113,61 +122,102 @@ Released metrics:
 - AUC response high: 0.800
 - Fixed 0.5 balanced accuracy: 0.733
 
-## Patient-Level CRC Observed On-Treatment p_response Readout
+## Patient-Level cSCC Checkpoint Benchmark
 
 Artifacts:
 
-- `patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604/crc_on_treatment_p_response_readout_metrics.csv`
-- `patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604/crc_on_treatment_p_response_patient_scores.csv`
-- `patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604/crc_on_treatment_p2_p12_module_reference.csv`
-- `patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604/crc_on_treatment_p_response_summary.json`
+- `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/cscc_checkpoint_compartment_patient_scores_20260604.csv`
+- `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/cscc_checkpoint_compartment_metrics_20260604.csv`
+- `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/cscc_checkpoint_compartment_summary.json`
+- `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/reproduce_cscc_checkpoint_compartment.py`
 
 Rows:
 
-- 11 measured on-treatment CRC patient rows.
-- Labels: partial response vs stable disease.
-- Primary readout: `observed_absolute_state_p_response`.
+- 12 pretreatment cSCC patient rows.
+- Labels: `response_label`, where `1` is pCR/mPR responder and `0` is
+  Non-mPR/pCR non-responder.
+- Public score: `relative_response_probability`.
 
-Calculation:
-
-```text
-observed_absolute_state_p_response =
-  p_response gate scored on measured on-treatment tissue state
-```
-
-The fixed classifier is:
+The score uses the same universal response-axis product shape as the CRC
+patient and cohort-level benchmarks, but routes cSCC checkpoint axes to their
+validated compartments:
 
 ```text
-predicted responder = observed_absolute_state_p_response >= 0.5
+relative_response_probability =
+  immune_primary.engagement_support
+  * immune_primary.response_conversion_support
+  * immune_primary.coverage_support
+  * epithelial.resistant_tail_control
+  * immune_primary.escape_refuge_control
 ```
 
 Boundary:
 
-- This readout uses measured on-treatment state.
+- The score does not use patient labels to assign scores.
+- It does not use observed ORR calibration, z-scores, or drug priors.
+- It is a relative p_response ranking score, not an absolute clinical ORR
+  probability.
+- The public table contains only the promoted compartment map, not the full
+  exploratory all-combination axis-source screen.
+
+Released metrics:
+
+- Rows: 12
+- AUC response high: 0.944
+- Spearman response high: 0.772
+
+## Patient-Level CRC Module Mean Cosine Readout
+
+Artifacts:
+
+- `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_step_summary.csv`
+- `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_patient_steps.csv`
+- `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_module_vectors.csv`
+- `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_summary.json`
+- `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/reproduce_crc_module_mean_cosine.py`
+
+Rows:
+
+- 11 CRC patients.
+- Cascade steps 1-8.
+- Primary readout: `module_mean_cosine`.
+
+Calculation:
+
+```text
+for each patient and cascade step:
+  predicted_module_delta[module] =
+    mean(predicted_delta_logcp10k[genes in module])
+
+  observed_module_delta[module] =
+    mean(observed_tumor_on_minus_pre_delta_logcp10k[genes in module])
+
+  module_mean_cosine =
+    cosine(predicted_module_delta, observed_module_delta)
+```
+
+The readout uses 41 scoring-panel genes present in the CRC panel and six
+response/resistance modules.
+
+Released module mean cosine metrics:
+
+- Patients: 11
+- Best mean step: 4
+- Step 1 mean: -0.106
+- Step 4 mean: 0.304
+- Step 4 median: 0.561
+- Step 4 PR mean: 0.522
+- Step 4 SD mean: 0.123
+
+Boundary:
+
+- This readout uses measured tumor on-treatment minus pretreatment delta as
+  the observed target.
 - It is not a pretreatment prediction benchmark.
 - It does not replace the public pretreatment `response_score_rank_calibrated`
   score.
-- It is included as observed-state validation for the p_response/module panel
-  and as P2/P12 explainer support.
-
-Released observed absolute-state p_response metrics:
-
-- Rows: 11
-- AUC PR-high: 0.867
-- Fixed 0.5 balanced accuracy: 0.917
-- PR mean: 0.6128
-- SD mean: 0.3545
-- Fixed-threshold calls: 5/5 PR and 5/6 SD; missed patient P11.
-
-Important comparator:
-
-- Observed delta p_response AUC PR-high: 0.600
-- Observed delta p_response fixed 0.5 balanced accuracy: 0.533
-
-Secondary readout:
-
-- The observed signed MOA-risk adapter reaches SD-high AUC 0.900, but it is not
-  the same object as the p_response explainer and calls P12 responder-like.
+- It reports broad program-level alignment, not exact within-module
+  gene-by-gene reconstruction.
 
 ## Cohort-Level Gaia ORR Benchmark
 
@@ -177,6 +227,7 @@ Artifacts:
 - `cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv`
 - `cohort-level-bench/model_scores/gaia/gaia_metrics.csv`
 - `cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json`
+- `cohort-level-bench/model_scores/gaia/reproduce_gaia_metrics.py`
 
 Rows:
 
@@ -218,6 +269,8 @@ Released metrics:
 Artifacts:
 
 - `cohort-level-bench/baseline/atlas_orr_baseline.py`
+- `cohort-level-bench/baseline/reproduce_atlas_orr_results.py`
+- `cohort-level-bench/baseline/results/atlas_orr_predictions.csv`
 - `cohort-level-bench/baseline/results/atlas_orr_metrics.csv`
 - `cohort-level-bench/baseline/results/atlas_orr_summary.json`
 - `cohort-level-bench/baseline/results/atlas_orr_methodology.md`
@@ -286,6 +339,7 @@ Released metrics:
 Artifacts:
 
 - `cohort-level-bench/baseline/depmap_orr_baseline.py`
+- `cohort-level-bench/baseline/reproduce_depmap_orr_results.py`
 - `cohort-level-bench/baseline/results/depmap_orr_features.csv`
 - `cohort-level-bench/baseline/results/depmap_orr_metrics.csv`
 - `cohort-level-bench/baseline/results/depmap_orr_summary.json`
@@ -335,6 +389,25 @@ Released metrics:
 - AUC above disease median: 0.474
 
 ## Reproduction Commands
+
+Verify every checked-in release metric without external raw data:
+
+```bash
+python scripts/reproduce_release_scores.py
+```
+
+Verify individual checked-in score artifacts:
+
+```bash
+python cohort-level-bench/model_scores/gaia/reproduce_gaia_metrics.py
+python cohort-level-bench/baseline/reproduce_atlas_orr_results.py
+python cohort-level-bench/baseline/reproduce_depmap_orr_results.py
+python patient-level-bench/model_scores/crc_moa_tailored_20260525/reproduce_crc_moa_tailored_rank_score.py
+python patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/reproduce_cscc_checkpoint_compartment.py
+python patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/reproduce_crc_module_mean_cosine.py
+```
+
+Regenerate Atlas/DepMap baseline feature rows from external source data:
 
 Atlas:
 

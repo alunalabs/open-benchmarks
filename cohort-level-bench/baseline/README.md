@@ -12,14 +12,19 @@ baseline boundaries.
   score is `atlas_mono_disease_therapy_shrink_k8`.
 - `atlas_orr_ctgov_audit.py`: optional support-arm audit against
   ClinicalTrials.gov outcome measurements.
+- `reproduce_atlas_orr_results.py`: recompute Atlas release metrics from the
+  checked-in 44-row `results/atlas_orr_predictions.csv`.
 - `depmap_orr_baseline.py`: DepMap GDSC/PRISM lineage-sensitivity baseline.
   The primary score is `depmap_lineage_sensitivity_rank`.
+- `reproduce_depmap_orr_results.py`: recompute DepMap release metrics from the
+  checked-in 44-row `results/depmap_orr_features.csv`.
 
 ## Checked-In Results
 
 Release summaries are under `results/`:
 
 - `atlas_orr_metrics.csv`
+- `atlas_orr_predictions.csv`
 - `atlas_orr_summary.json`
 - `atlas_orr_methodology.md`
 - `depmap_orr_features.csv`
@@ -61,6 +66,11 @@ shrunk ORR = n / (n + 8) * disease_therapy_ORR
 `k=8` is fixed and is not selected by optimizing the 44 target ORR labels.
 Observed ORR is used only after prediction to compute metrics.
 
+The checked-in `results/atlas_orr_predictions.csv` is a compact public
+prediction table. It includes target metadata, observed ORR for evaluation, the
+Atlas primary score, source cell, and support counts. It excludes Gaia score
+columns.
+
 Fixed Atlas result on the 44 target rows:
 
 - Pearson r: `0.465`
@@ -99,6 +109,12 @@ python cohort-level-bench/baseline/atlas_orr_baseline.py \
   --strict-release-cleaning
 ```
 
+Verify the checked-in Atlas release metrics without external raw data:
+
+```bash
+python cohort-level-bench/baseline/reproduce_atlas_orr_results.py
+```
+
 ## Reproduce DepMap
 
 ```bash
@@ -108,4 +124,10 @@ python cohort-level-bench/baseline/depmap_orr_baseline.py \
   --cohort-predictions cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv \
   --output-dir artifacts/depmap_orr_baseline \
   --surface-score-column gaia_predicted_orr_pct
+```
+
+Verify the checked-in DepMap release metrics without external raw data:
+
+```bash
+python cohort-level-bench/baseline/reproduce_depmap_orr_results.py
 ```

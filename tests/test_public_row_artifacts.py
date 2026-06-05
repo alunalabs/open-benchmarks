@@ -1,9 +1,20 @@
 from __future__ import annotations
 
+import ast
 import csv
 import json
 import math
 from pathlib import Path
+
+from spatial_benchmarks.metrics import module_mean_cosine
+from spatial_benchmarks.reproduce import (
+    reproduce_atlas_orr_predictions,
+    reproduce_crc_module_mean_cosine,
+    reproduce_crc_moa_tailored_rank_score,
+    reproduce_cscc_checkpoint_compartment,
+    reproduce_depmap_orr_features,
+    reproduce_gaia_cohort_orr,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,29 +39,30 @@ def test_public_row_artifact_counts() -> None:
         round(summary["patient_level"]["crc_moa_tailored_default_fixed_0p5_balanced_accuracy"], 3)
         == 0.733
     )
-    assert summary["patient_level"]["crc_on_treatment_p_response_patient_rows"] == 11
-    assert (
-        round(summary["patient_level"]["crc_on_treatment_p_response_absolute_state_auc"], 3)
-        == 0.867
+    assert summary["patient_level"]["cscc_checkpoint_compartment_patient_score_rows"] == 12
+    assert summary["patient_level"]["cscc_checkpoint_compartment_default_score_column"] == (
+        "relative_response_probability"
     )
     assert (
-        round(
-            summary["patient_level"][
-                "crc_on_treatment_p_response_absolute_state_balanced_accuracy"
-            ],
-            3,
-        )
-        == 0.917
+        round(summary["patient_level"]["cscc_checkpoint_compartment_auc_response_high"], 3)
+        == 0.944
     )
-    assert round(summary["patient_level"]["crc_on_treatment_p_response_delta_auc"], 3) == 0.600
     assert (
-        round(summary["patient_level"]["crc_on_treatment_signed_risk_adapter_auc_sd_high"], 3)
-        == 0.900
+        round(summary["patient_level"]["cscc_checkpoint_compartment_spearman_response_high"], 3)
+        == 0.772
     )
+    assert summary["patient_level"]["crc_module_mean_cosine_patient_step_rows"] == 88
+    assert summary["patient_level"]["crc_module_mean_cosine_module_vector_rows"] == 528
+    assert summary["patient_level"]["crc_module_mean_cosine_best_step"] == 4
+    assert round(summary["patient_level"]["crc_module_mean_cosine_step1_mean"], 3) == -0.106
+    assert round(summary["patient_level"]["crc_module_mean_cosine_step4_mean"], 3) == 0.304
+    assert round(summary["patient_level"]["crc_module_mean_cosine_step4_pr_mean"], 3) == 0.522
+    assert round(summary["patient_level"]["crc_module_mean_cosine_step4_sd_mean"], 3) == 0.123
 
     cohort = summary["cohort_level"]
     assert cohort["cohort_benchmark_strict44_clinical_rows"] == 44
     assert cohort["gaia_44_strict_orr_model_score_rows"] == 44
+    assert cohort["atlas_orr_prediction_rows"] == 44
     assert cohort["gaia_default_score_column"] == "gaia_predicted_orr_pct"
     assert round(cohort["gaia_pearson"], 3) == 0.650
     assert round(cohort["gaia_spearman"], 3) == 0.594
@@ -134,6 +146,7 @@ def test_crc_patient_moa_tailored_rank_score_rows() -> None:
     assert summary["uses_z_scores"] is False
     assert summary["uses_drug_prior"] is False
     assert "crc_patient_moa_tailored_rank_scores_20260525.csv" in manifest
+    assert "reproduce_crc_moa_tailored_rank_score.py" in manifest
     assert "crc_patient_moa_tailored_probabilities_20260525.csv" not in manifest
     assert round(summary["default_metrics"]["auc_response_high"], 3) == 0.800
     assert round(summary["default_metrics"]["fixed_0p5_balanced_accuracy"], 3) == 0.733
@@ -179,45 +192,111 @@ def _sigmoid(value: float, *, center: float, scale: float) -> float:
     return 1.0 / (1.0 + math.exp(-z))
 
 
-def test_crc_observed_on_treatment_p_response_readout() -> None:
-    base = "patient-level-bench/observed_readouts/crc_on_treatment_p_response_20260604"
-    rows = read_csv(f"{base}/crc_on_treatment_p_response_patient_scores.csv")
-    metrics = read_csv(f"{base}/crc_on_treatment_p_response_readout_metrics.csv")
-    modules = read_csv(f"{base}/crc_on_treatment_p2_p12_module_reference.csv")
-    summary = json.loads((ROOT / base / "crc_on_treatment_p_response_summary.json").read_text())
+def test_cscc_checkpoint_compartment_score_rows() -> None:
+    base = "patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604"
+    rows = read_csv(f"{base}/cscc_checkpoint_compartment_patient_scores_20260604.csv")
+    metrics = read_csv(f"{base}/cscc_checkpoint_compartment_metrics_20260604.csv")
+    summary = json.loads((ROOT / base / "cscc_checkpoint_compartment_summary.json").read_text())
     manifest = json.loads((ROOT / base / "MANIFEST.json").read_text())
 
-    assert len(rows) == 11
-    assert len(metrics) == 3
-    assert len(modules) == 5
+    forbidden = {
+        "universal_axis_product_response_probability",
+        "axis_available_count",
+        "drug_norm",
+        "dataset",
+        "proxy_policy",
+    }
+
+    assert len(rows) == 12
+    assert forbidden.isdisjoint(rows[0])
+    assert len(metrics) == 1
+    assert "cscc_checkpoint_compartment_patient_scores_20260604.csv" in manifest
+    assert "cscc_checkpoint_compartment_metrics_20260604.csv" in manifest
+    assert "reproduce_cscc_checkpoint_compartment.py" in manifest
+    assert summary["default_score_column"] == "relative_response_probability"
+    assert summary["default_risk_score_column"] == "nonresponse_probability"
+    assert summary["n_responders"] == 6
+    assert summary["n_nonresponders"] == 6
+    assert summary["axis_source_map"] == {
+        "coverage_support": "immune_primary_cells",
+        "engagement_support": "immune_primary_cells",
+        "escape_refuge_control": "immune_primary_cells",
+        "resistant_tail_control": "epithelial",
+        "response_conversion_support": "immune_primary_cells",
+    }
+    assert summary["boundary"]["uses_patient_labels_for_default_probability_assignment"] is False
+    assert summary["boundary"]["uses_z_scores"] is False
+    assert summary["boundary"]["uses_drug_prior"] is False
+    assert summary["boundary"]["is_absolute_clinical_orr_probability"] is False
+    assert round(summary["default_metrics"]["auc_response_high"], 3) == 0.944
+    assert round(summary["default_metrics"]["spearman_response_high"], 3) == 0.772
+
+    for row in rows:
+        assert row["axis_contract_version"] == "cscc_compartment_specific_checkpoint_axes_v1"
+        assert row["axis_variant"] == "checkpoint_compartment_default_v1"
+        assert row["mode"] == "visible_persistent"
+        assert row["cascade_step"] == "4"
+        assert row["engagement_support_source_scope"] == "immune_primary_cells"
+        assert row["response_conversion_support_source_scope"] == "immune_primary_cells"
+        assert row["coverage_support_source_scope"] == "immune_primary_cells"
+        assert row["resistant_tail_control_source_scope"] == "epithelial"
+        assert row["escape_refuge_control_source_scope"] == "immune_primary_cells"
+        expected = (
+            float(row["engagement_support"])
+            * float(row["response_conversion_support"])
+            * float(row["coverage_support"])
+            * float(row["resistant_tail_control"])
+            * float(row["escape_refuge_control"])
+        )
+        assert abs(float(row["relative_response_probability"]) - expected) < 1e-12
+
+    metric = metrics[0]
+    assert metric["n_patients"] == "12"
+    assert round(float(metric["auc_response_high"]), 3) == 0.944
+    assert round(float(metric["spearman_response_high"]), 3) == 0.772
+
+
+def test_crc_module_mean_cosine_readout() -> None:
+    base = "patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604"
+    step_summary = read_csv(f"{base}/crc_module_mean_cosine_step_summary.csv")
+    patient_steps = read_csv(f"{base}/crc_module_mean_cosine_patient_steps.csv")
+    module_vectors = read_csv(f"{base}/crc_module_mean_cosine_module_vectors.csv")
+    summary = json.loads((ROOT / base / "crc_module_mean_cosine_summary.json").read_text())
+    manifest = json.loads((ROOT / base / "MANIFEST.json").read_text())
+
+    assert len(step_summary) == 8
+    assert len(patient_steps) == 88
+    assert len(module_vectors) == 528
     assert "README.md" in manifest
-    assert "predicted_delta_moa_gate_response_probability" not in rows[0]
-    assert summary["boundary"]["uses_measured_on_treatment_state"] is True
+    assert "crc_module_mean_cosine_step_summary.csv" in manifest
+    assert "reproduce_crc_module_mean_cosine.py" in manifest
+    assert summary["metric"] == "module_mean_cosine"
+    assert summary["boundary"]["uses_measured_on_treatment_delta"] is True
     assert summary["boundary"]["is_pretreatment_prediction_benchmark"] is False
     assert summary["boundary"]["is_public_crc_rank_score"] is False
+    assert summary["boundary"]["is_public_crc_cosine_readout"] is True
 
-    by_readout = {row["readout"]: row for row in metrics}
-    absolute = by_readout["observed_absolute_state_p_response"]
-    delta = by_readout["observed_delta_p_response"]
-    risk = by_readout["observed_signed_moa_risk_adapter"]
+    by_step = {int(row["cascade_step"]): row for row in step_summary}
+    assert round(float(by_step[1]["mean"]), 3) == -0.106
+    assert round(float(by_step[4]["mean"]), 3) == 0.304
+    assert round(float(by_step[4]["pr_mean"]), 3) == 0.522
+    assert round(float(by_step[4]["sd_mean"]), 3) == 0.123
+    assert by_step[4]["highest_patient"] == "P5"
 
-    assert absolute["direction"] == "PR high"
-    assert round(float(absolute["auc"]), 3) == 0.867
-    assert round(float(absolute["balanced_accuracy"]), 3) == 0.917
-    assert round(float(absolute["pr_mean"]), 4) == 0.6128
-    assert round(float(absolute["sd_mean"]), 4) == 0.3545
-
-    assert round(float(delta["auc"]), 3) == 0.600
-    assert round(float(delta["balanced_accuracy"]), 3) == 0.533
-    assert risk["direction"] == "SD high"
-    assert round(float(risk["auc"]), 3) == 0.900
-
-    by_patient = {row["source_patient_id"]: row for row in rows}
-    assert round(float(by_patient["P2"]["observed_absolute_state_p_response"]), 4) == 0.6180
-    assert round(float(by_patient["P12"]["observed_absolute_state_p_response"]), 4) == 0.3428
-    assert by_patient["P2"]["absolute_state_correct_at_0p5"] == "True"
-    assert by_patient["P12"]["absolute_state_correct_at_0p5"] == "True"
-    assert by_patient["P11"]["absolute_state_correct_at_0p5"] == "False"
+    p5_step4_vectors = [
+        row
+        for row in module_vectors
+        if row["source_patient_id"] == "P5" and row["cascade_step"] == "4"
+    ]
+    p5_step4_score = next(
+        row
+        for row in patient_steps
+        if row["source_patient_id"] == "P5" and row["cascade_step"] == "4"
+    )
+    assert round(module_mean_cosine(p5_step4_vectors), 3) == round(
+        float(p5_step4_score["module_mean_cosine"]),
+        3,
+    )
 
 
 def test_gaia_public_model_score_rows() -> None:
@@ -260,6 +339,7 @@ def test_gaia_public_model_score_rows() -> None:
         "gaia_by_disease_metrics.csv",
         "gaia_metrics.csv",
         "gaia_model_score_summary.json",
+        "reproduce_gaia_metrics.py",
     ]
 
 
@@ -271,10 +351,12 @@ def test_baseline_metrics_use_44_row_target() -> None:
         (ROOT / "cohort-level-bench/baseline/results/depmap_orr_summary.json").read_text()
     )
     atlas_metrics = read_csv("cohort-level-bench/baseline/results/atlas_orr_metrics.csv")
+    atlas_predictions = read_csv("cohort-level-bench/baseline/results/atlas_orr_predictions.csv")
     depmap_features = read_csv("cohort-level-bench/baseline/results/depmap_orr_features.csv")
 
     assert atlas_summary["target_eval_rows"] == 44
     assert depmap_summary["target_eval_rows"] == 44
+    assert len(atlas_predictions) == 44
     assert len(depmap_features) == 44
 
     assert round(atlas_summary["primary_baseline"]["pearson"], 3) == 0.465
@@ -286,8 +368,91 @@ def test_baseline_metrics_use_44_row_target() -> None:
     assert atlas_metrics[0]["score_col"] == "atlas_mono_disease_therapy_shrink_k8"
     assert atlas_metrics[0]["n_rows"] == "44"
     assert len(atlas_metrics) == 1
+    assert "gaia_predicted_orr_pct" not in atlas_predictions[0]
+    assert "default_score" not in atlas_predictions[0]
     assert "gaia_predicted_orr_pct" not in depmap_features[0]
     assert "default_score" not in depmap_features[0]
+
+
+def test_reproduction_scripts_have_no_metric_drift() -> None:
+    gaia = reproduce_gaia_cohort_orr(
+        scores_csv=(
+            ROOT / "cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv"
+        ),
+        metrics_csv=ROOT / "cohort-level-bench/model_scores/gaia/gaia_metrics.csv",
+        by_disease_csv=ROOT / "cohort-level-bench/model_scores/gaia/gaia_by_disease_metrics.csv",
+    )
+    atlas = reproduce_atlas_orr_predictions(
+        predictions_csv=ROOT / "cohort-level-bench/baseline/results/atlas_orr_predictions.csv",
+        metrics_csv=ROOT / "cohort-level-bench/baseline/results/atlas_orr_metrics.csv",
+    )
+    depmap = reproduce_depmap_orr_features(
+        features_csv=ROOT / "cohort-level-bench/baseline/results/depmap_orr_features.csv",
+        metrics_csv=ROOT / "cohort-level-bench/baseline/results/depmap_orr_metrics.csv",
+    )
+    crc = reproduce_crc_moa_tailored_rank_score(
+        scores_csv=(
+            ROOT
+            / "patient-level-bench/model_scores/crc_moa_tailored_20260525/"
+            "crc_patient_moa_tailored_rank_scores_20260525.csv"
+        ),
+        metrics_csv=(
+            ROOT
+            / "patient-level-bench/model_scores/crc_moa_tailored_20260525/"
+            "crc_patient_moa_tailored_metrics_20260525.csv"
+        ),
+    )
+    cscc = reproduce_cscc_checkpoint_compartment(
+        scores_csv=(
+            ROOT
+            / "patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/"
+            "cscc_checkpoint_compartment_patient_scores_20260604.csv"
+        ),
+        metrics_csv=(
+            ROOT
+            / "patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/"
+            "cscc_checkpoint_compartment_metrics_20260604.csv"
+        ),
+    )
+    cosine = reproduce_crc_module_mean_cosine(
+        module_vectors_csv=(
+            ROOT
+            / "patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/"
+            "crc_module_mean_cosine_module_vectors.csv"
+        ),
+        patient_steps_csv=(
+            ROOT
+            / "patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/"
+            "crc_module_mean_cosine_patient_steps.csv"
+        ),
+        step_summary_csv=(
+            ROOT
+            / "patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/"
+            "crc_module_mean_cosine_step_summary.csv"
+        ),
+    )
+
+    for report in (gaia, atlas, depmap, crc, cscc, cosine):
+        assert report["drift"] == []
+
+
+def test_reproducibility_notebooks_are_valid_json() -> None:
+    notebooks = sorted((ROOT / "notebooks").glob("*.ipynb"))
+    assert [notebook.name for notebook in notebooks] == [
+        "01_cohort_benchmarks.ipynb",
+        "02_patient_benchmarks.ipynb",
+    ]
+    for notebook in notebooks:
+        payload = json.loads(notebook.read_text(encoding="utf-8"))
+        assert payload["nbformat"] == 4
+        assert payload["cells"]
+        source = "".join("".join(cell.get("source", [])) for cell in payload["cells"])
+        assert "open-benchmarks" in source
+        assert "artifacts/notebook_figures" in source
+        for cell_index, cell in enumerate(payload["cells"]):
+            if cell.get("cell_type") == "code":
+                code = "".join(cell.get("source", []))
+                ast.parse(code, filename=f"{notebook.name}:cell{cell_index}")
 
 
 def test_methodology_doc_covers_public_release() -> None:
@@ -295,10 +460,12 @@ def test_methodology_doc_covers_public_release() -> None:
 
     required_phrases = [
         "Patient-Level CRC Benchmark",
-        "Patient-Level CRC Observed On-Treatment p_response Readout",
+        "Patient-Level cSCC Checkpoint Benchmark",
+        "Patient-Level CRC Module Mean Cosine Readout",
         "Cohort-Level Gaia ORR Benchmark",
         "Atlas Fixed `k=8` ORR Baseline",
         "DepMap ORR Baseline",
+        "reproduce_release_scores.py",
         "Pearson r",
         "Spearman rho",
         "This release excludes BioBench",
