@@ -1,0 +1,4 @@
+variant,control_family,n_random,real_within_disease_spearman,control_wd_spearman_mean,control_wd_spearman_p95,empirical_p_wd_spearman_ge_real,real_within_disease_pearson,control_wd_pearson_mean,control_wd_pearson_p95,empirical_p_wd_pearson_ge_real
+signed_mag_tail_soft_primary,random_same_patient_wrong_drug,20,0.4391233795235021,-0.1006772707162567,0.2324366070096286,0.0,0.3630509173355294,-0.0646347661252539,0.2423626001396145,0.0
+signed_mag_tail_hard_reference,random_same_patient_wrong_drug,20,0.4950988374517546,-0.1081432305827271,0.1250725207048734,0.0,0.4084955034069356,-0.0651465774473181,0.130151597901326,0.0
+grid_covgate90_magm0005_tailm0020,random_same_patient_wrong_drug,20,0.4204256593332446,-0.1350644945786871,0.1255513192568833,0.0,0.3922821236823675,-0.1095707354861431,0.1346821555190471,0.0

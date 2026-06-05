@@ -6,7 +6,7 @@
     "module_count": 6,
     "scoring_genes_present": 41,
     "observed_delta": "tumor on-treatment mean logCP10k minus tumor pretreatment mean logCP10k",
-    "predicted_delta": "v13.1b visible_persistent cascade predicted_delta_logcp10k"
+    "predicted_delta": "Gaia visible_persistent cascade predicted_delta_logcp10k"
   },
   "boundary": {
     "uses_measured_on_treatment_delta": true,

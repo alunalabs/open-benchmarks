@@ -32,6 +32,11 @@ Release summaries are under `results/`:
 - `depmap_orr_summary.json`
 - `depmap_orr_methodology.md`
 
+Robustness-control summaries are under
+`robustness_controls_20260525/`. These are null/control baselines for the
+44-row cohort readout, not replacement predictors for the Atlas or DepMap
+baselines.
+
 ## Atlas Overfit Boundary
 
 The Atlas prior asks what similar trials have historically achieved. For each
@@ -97,6 +102,26 @@ DepMap result on the same 44 target rows:
 - Pearson r: `-0.014`
 - Spearman rho: `-0.044`
 - AUC above disease median: `0.474`
+
+## Robustness Controls
+
+`robustness_controls_20260525/` contains compact hard-donor and gene-shuffle
+control summaries for the 44-row heterogeneity-magnitude cohort readout.
+
+Hard-donor controls replace the correct target context with same-patient
+wrong-drug donor contexts. They test whether the readout remains specific to
+the matched disease/drug context instead of preserving a generic patient rank.
+
+Gene-shuffle controls preserve control sizes and signs while shuffling gene
+identity. They test whether the signal depends on the correct gene/module
+assignment rather than arbitrary score movement.
+
+Primary signed-mag-tail-soft result:
+
+- Real within-disease Spearman: `0.439`
+- Random same-patient wrong-drug donor null p95: `0.232`
+- Gene-shuffle null p95: `0.371`
+- Empirical p for gene-shuffle null >= real: `0.01`
 
 ## Reproduce Atlas
 

@@ -7,10 +7,12 @@ This repo was extracted from the internal `spatial-fun` monorepo.
 | Layer | Source surface | Intended public contents |
 | --- | --- | --- |
 | Patient benchmark | Patient-level production exports | CRC clinical rows, compact CRC rank-score table, cSCC checkpoint score table, metrics, policy summaries |
+| Patient control baselines | CRC prior-control audit | Sanitized CRC hard-donor and gene-swap patient-control rows plus compact summaries |
 | Patient observed readout | CRC measured on-treatment delta audit | Compact module mean cosine trajectory, patient-step scores, and module vectors |
 | Cohort benchmark | Strict ORR cohort rows | 44-row clinical manifest, 44-row Gaia predicted ORR table, metrics |
 | Atlas ORR baseline | Atlas trial-arm CSV | Code, methodology, compact 44-row baseline prediction table, and result summaries; raw Atlas remains external |
 | DepMap ORR baseline | DepMap model/drug matrices | Code, methodology, 44-row feature table, and baseline result summaries; raw matrices remain external |
+| Cohort control baselines | Heterogeneity-magnitude robustness audit | Hard-donor and gene-swap control metric rows and null summaries |
 
 BioBench is not part of this public release. The public cohort surface is the
 strict 44-row ORR set.
@@ -56,6 +58,13 @@ Patient-level CRC module mean cosine readout:
 - `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_module_vectors.csv`
 - `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/reproduce_crc_module_mean_cosine.py`
 
+Patient-level CRC control baselines:
+
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_patient_prior_control_patient_scores.csv`
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_patient_prior_control_metrics.csv`
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_patient_prior_control_vs_baseline.csv`
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_hard_donor_gene_delta_step_summary.csv`
+
 Cohort-level strict ORR:
 
 - [cohort-level-bench/clinical_rows/cohort_benchmark_strict44_clinical_rows.csv](../cohort-level-bench/clinical_rows/cohort_benchmark_strict44_clinical_rows.csv)
@@ -90,3 +99,10 @@ DepMap ORR baseline:
 - `cohort-level-bench/baseline/results/depmap_orr_features.csv`
 - `cohort-level-bench/baseline/results/depmap_orr_metrics.csv`
 - `cohort-level-bench/baseline/results/depmap_orr_summary.json`
+
+Cohort-level control baselines:
+
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_hard_donor_controls.csv`
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_hard_donor_random_summary.csv`
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_gene_shuffle_controls.csv`
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_gene_shuffle_random_summary.csv`

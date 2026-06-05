@@ -10,6 +10,8 @@ probability columns are intentionally omitted from those row files.
 Reviewed model-score artifacts live under `model_scores/`.
 Observed readout artifacts live under `observed_readouts/`; these use measured
 on-treatment tissue deltas and are not pretreatment prediction benchmarks.
+Baseline/control artifacts live under `baseline/`; these are robustness audits,
+not promoted patient response predictors.
 
 ## CRC MOA-Tailored Rank Score
 
@@ -60,3 +62,19 @@ module-cosine artifact for 11 CRC patients:
 The calculation averages predicted and observed gene deltas within each scoring
 module, then computes cosine similarity across the resulting module-mean
 vectors. This is a program-alignment readout, not a direct responder classifier.
+
+## CRC Prior-Control Baselines
+
+`baseline/crc_prior_controls_20260525/` contains hard-donor and gene-swap
+control artifacts for the CRC prior-control audit:
+
+- Sanitized patient control rows: `33` rows, covering 11 patients across
+  baseline, gene-shuffled, and hard-donor controls.
+- Gene-swap predicted-delta p_response AUC: `0.567`; mean absolute movement
+  versus baseline: `0.297`.
+- Hard-donor predicted-delta p_response AUC: `0.633`; mean absolute movement
+  versus baseline: `0.014`.
+
+These controls test donor/context and gene/module specificity. They are not
+the promoted CRC response benchmark; use `response_score_rank_calibrated` for
+that benchmark.

@@ -37,6 +37,8 @@ Public artifacts:
 - `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/reproduce_cscc_checkpoint_compartment.py`
 - `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_step_summary.csv`
 - `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/reproduce_crc_module_mean_cosine.py`
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_patient_prior_control_patient_scores.csv`
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_patient_prior_control_vs_baseline.csv`
 
 The public CRC score is `response_score_rank_calibrated`. It summarizes
 KRAS/MAPK, EGFR, cytostasis, escape-control, and kill-conversion module
@@ -70,6 +72,15 @@ Module mean cosine readout:
 - Boundary: compares cascade predicted tumor program deltas against measured
   tumor on-treatment minus pretreatment deltas; not a pretreatment prediction
   benchmark.
+
+CRC prior-control baselines:
+
+- Gene-swap control: `0.567` AUC on the predicted-delta p_response surface
+  with `0.297` mean absolute movement versus baseline.
+- Hard-donor control: `0.633` AUC on the same surface with only `0.014` mean
+  absolute movement versus baseline.
+- Boundary: these are donor/context and gene/module specificity audits, not
+  promoted patient response predictors.
 
 ## Cohort-Level Bench
 
@@ -140,6 +151,14 @@ DepMap drug sensitivity:
 
 DepMap is included as a negative external-data baseline on the same 44-row ORR
 surface.
+
+Robustness controls:
+
+- Folder: `cohort-level-bench/baseline/robustness_controls_20260525/`
+- Hard-donor baseline: same-patient wrong-drug donor contexts.
+- Gene-swap baseline: gene-shuffled controls preserving sizes and signs.
+- Primary 44-row within-disease Spearman: real `0.439`, hard-donor null p95
+  `0.232`, gene-swap null p95 `0.371`.
 
 ## Install
 

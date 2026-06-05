@@ -58,6 +58,21 @@ def test_public_row_artifact_counts() -> None:
     assert round(summary["patient_level"]["crc_module_mean_cosine_step4_mean"], 3) == 0.304
     assert round(summary["patient_level"]["crc_module_mean_cosine_step4_pr_mean"], 3) == 0.522
     assert round(summary["patient_level"]["crc_module_mean_cosine_step4_sd_mean"], 3) == 0.123
+    assert summary["patient_level"]["crc_prior_control_patient_score_rows"] == 33
+    assert summary["patient_level"]["crc_prior_control_patients_per_control"] == 11
+    assert summary["patient_level"]["crc_prior_control_primary_surface"] == (
+        "predicted_delta_moa_gate_response_probability"
+    )
+    assert round(summary["patient_level"]["crc_prior_control_gene_shuffled_auc"], 3) == 0.567
+    assert (
+        round(summary["patient_level"]["crc_prior_control_gene_shuffled_mean_abs_movement"], 3)
+        == 0.297
+    )
+    assert round(summary["patient_level"]["crc_prior_control_hard_donor_auc"], 3) == 0.633
+    assert (
+        round(summary["patient_level"]["crc_prior_control_hard_donor_mean_abs_movement"], 3)
+        == 0.014
+    )
 
     cohort = summary["cohort_level"]
     assert cohort["cohort_benchmark_strict44_clinical_rows"] == 44
@@ -72,6 +87,12 @@ def test_public_row_artifact_counts() -> None:
     assert cohort["depmap_covered_rows"] == 40
     assert round(cohort["depmap_primary_pearson"], 3) == -0.014
     assert round(cohort["depmap_primary_spearman"], 3) == -0.044
+    assert cohort["cohort_robustness_hard_donor_control_rows"] == 69
+    assert cohort["cohort_robustness_gene_shuffle_control_rows"] == 300
+    assert cohort["cohort_robustness_primary_variant"] == "signed_mag_tail_soft_primary"
+    assert round(cohort["cohort_robustness_real_wd_spearman"], 3) == 0.439
+    assert round(cohort["cohort_robustness_hard_donor_null_p95"], 3) == 0.232
+    assert round(cohort["cohort_robustness_gene_shuffle_null_p95"], 3) == 0.371
 
 
 def test_public_clinical_rows_are_metadata_only() -> None:
@@ -299,6 +320,40 @@ def test_crc_module_mean_cosine_readout() -> None:
     )
 
 
+def test_crc_prior_control_baseline_artifacts() -> None:
+    base = "patient-level-bench/baseline/crc_prior_controls_20260525"
+    rows = read_csv(f"{base}/crc_patient_prior_control_patient_scores.csv")
+    metrics = read_csv(f"{base}/crc_patient_prior_control_metrics.csv")
+    movement = read_csv(f"{base}/crc_patient_prior_control_vs_baseline.csv")
+    manifest = json.loads((ROOT / base / "MANIFEST.json").read_text())
+
+    forbidden = {"run_id", "model_label", "checkpoint_path"}
+    assert len(rows) == 33
+    assert len(metrics) == 30
+    assert len(movement) == 10
+    assert forbidden.isdisjoint(rows[0])
+    assert forbidden.isdisjoint(metrics[0])
+    assert set(row["control"] for row in rows) == {"baseline", "gene_shuffled", "hard_donor"}
+    assert all(row["model_family"] == "gaia" for row in metrics)
+    assert "crc_patient_prior_control_patient_scores.csv" in manifest
+
+    surface = "predicted_delta_moa_gate_response_probability"
+    by_metric = {(row["control"], row["surface"]): row for row in metrics}
+    by_movement = {(row["control"], row["surface"]): row for row in movement}
+
+    assert round(float(by_metric[("baseline", surface)]["auc_response_high"]), 3) == 0.633
+    assert round(float(by_metric[("gene_shuffled", surface)]["auc_response_high"]), 3) == 0.567
+    assert round(float(by_metric[("hard_donor", surface)]["auc_response_high"]), 3) == 0.633
+    assert (
+        round(float(by_movement[("gene_shuffled", surface)]["mean_abs_movement"]), 3)
+        == 0.297
+    )
+    assert (
+        round(float(by_movement[("hard_donor", surface)]["mean_abs_movement"]), 3)
+        == 0.014
+    )
+
+
 def test_gaia_public_model_score_rows() -> None:
     rows = read_csv("cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv")
     clinical_rows = read_csv(
@@ -372,6 +427,32 @@ def test_baseline_metrics_use_44_row_target() -> None:
     assert "default_score" not in atlas_predictions[0]
     assert "gaia_predicted_orr_pct" not in depmap_features[0]
     assert "default_score" not in depmap_features[0]
+
+
+def test_cohort_robustness_control_artifacts() -> None:
+    base = "cohort-level-bench/baseline/robustness_controls_20260525"
+    hard_controls = read_csv(f"{base}/heterogeneity_hard_donor_controls.csv")
+    hard_summary = read_csv(f"{base}/heterogeneity_hard_donor_random_summary.csv")
+    gene_controls = read_csv(f"{base}/heterogeneity_gene_shuffle_controls.csv")
+    gene_summary = read_csv(f"{base}/heterogeneity_gene_shuffle_random_summary.csv")
+    manifest = json.loads((ROOT / base / "MANIFEST.json").read_text())
+
+    assert len(hard_controls) == 69
+    assert len(hard_summary) == 3
+    assert len(gene_controls) == 300
+    assert len(gene_summary) == 3
+    assert "heterogeneity_gene_shuffle_controls.csv" in manifest
+    assert "heterogeneity_hard_donor_controls.csv" in manifest
+
+    variant = "signed_mag_tail_soft_primary"
+    primary_hard = next(row for row in hard_summary if row["variant"] == variant)
+    primary_gene = next(row for row in gene_summary if row["variant"] == variant)
+
+    assert round(float(primary_hard["real_within_disease_spearman"]), 3) == 0.439
+    assert round(float(primary_hard["control_wd_spearman_p95"]), 3) == 0.232
+    assert float(primary_hard["empirical_p_wd_spearman_ge_real"]) == 0.0
+    assert round(float(primary_gene["control_wd_spearman_p95"]), 3) == 0.371
+    assert float(primary_gene["empirical_p_wd_spearman_ge_real"]) == 0.01
 
 
 def test_reproduction_scripts_have_no_metric_drift() -> None:
@@ -462,9 +543,11 @@ def test_methodology_doc_covers_public_release() -> None:
         "Patient-Level CRC Benchmark",
         "Patient-Level cSCC Checkpoint Benchmark",
         "Patient-Level CRC Module Mean Cosine Readout",
+        "Patient-Level CRC Prior-Control Baselines",
         "Cohort-Level Gaia ORR Benchmark",
         "Atlas Fixed `k=8` ORR Baseline",
         "DepMap ORR Baseline",
+        "Cohort-Level Hard-Donor and Gene-Swap Controls",
         "reproduce_release_scores.py",
         "Pearson r",
         "Spearman rho",

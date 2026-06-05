@@ -12,9 +12,13 @@ This release includes:
   patient rows.
 - Patient-level CRC module mean cosine readout: 11 CRC patients across
   cascade steps 1-8.
+- Patient-level CRC hard-donor and gene-swap control baselines: 11 CRC
+  patients across baseline, gene-shuffled, and hard-donor control surfaces.
 - Cohort-level ORR benchmark: 44 strict observed ORR cohort-drug rows.
 - Cohort-level baselines: Atlas fixed `k=8` ORR prior and DepMap lineage
   sensitivity on the same 44 target rows.
+- Cohort-level hard-donor and gene-swap robustness controls for the 44-row
+  heterogeneity-magnitude readout.
 
 This release excludes BioBench, full production prediction tables,
 patient-probability tables, raw spatial data, raw Atlas curation tables, and
@@ -50,6 +54,11 @@ Patient-level CRC metrics are evaluated against `observed_responder`:
   label.
 - Fixed 0.5 balanced accuracy: balanced accuracy of
   `response_score_rank_calibrated >= 0.5`.
+
+CRC prior-control baseline metrics use the same AUC and balanced-accuracy
+definitions, but are audit controls rather than promoted predictors. Risk-sum
+surfaces are oriented as lower risk is more responder-like for AUC and use
+`risk <= 0` for the thresholded call.
 
 ## Patient-Level CRC Benchmark
 
@@ -219,6 +228,61 @@ Boundary:
 - It reports broad program-level alignment, not exact within-module
   gene-by-gene reconstruction.
 
+## Patient-Level CRC Prior-Control Baselines
+
+Artifacts:
+
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_patient_prior_control_patient_scores.csv`
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_patient_prior_control_metrics.csv`
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_patient_prior_control_vs_baseline.csv`
+- `patient-level-bench/baseline/crc_prior_controls_20260525/crc_hard_donor_gene_delta_step_summary.csv`
+
+Rows:
+
+- 33 sanitized patient-control rows.
+- 11 CRC patients under each control: baseline, `gene_shuffled`, and
+  `hard_donor`.
+- Labels: `is_response`.
+
+Controls:
+
+- `gene_shuffled`: shuffles gene identity in the prior cascade while keeping
+  the patient rows and labels fixed. This tests whether the surface depends on
+  gene/module semantics.
+- `hard_donor`: replaces the intended donor context with a hard mismatched
+  donor context. This tests whether the ranked patient surface changes when the
+  donor/context is wrong.
+
+Primary audit surface:
+
+```text
+predicted_delta_moa_gate_response_probability
+```
+
+Metrics are recomputed from the sanitized patient-control table:
+
+```text
+AUC response high = AUC(is_response, p_response)
+balanced accuracy = BA(is_response, p_response >= 0.5)
+movement = mean(abs(control_patient_score - baseline_patient_score))
+```
+
+Released audit metrics on the primary surface:
+
+- Baseline AUC: 0.633
+- Gene-shuffled AUC: 0.567
+- Gene-shuffled mean absolute movement vs baseline: 0.297
+- Hard-donor AUC: 0.633
+- Hard-donor mean absolute movement vs baseline: 0.014
+
+Boundary:
+
+- This is a robustness/control audit, not the promoted CRC response benchmark.
+- The hard-donor step-4 surface barely moves from baseline, so this control is
+  a cautionary result rather than a specificity pass.
+- The promoted CRC patient benchmark remains
+  `response_score_rank_calibrated`.
+
 ## Cohort-Level Gaia ORR Benchmark
 
 Artifacts:
@@ -387,6 +451,70 @@ Released metrics:
 - Pearson r: -0.014
 - Spearman rho: -0.044
 - AUC above disease median: 0.474
+
+## Cohort-Level Hard-Donor and Gene-Swap Controls
+
+Artifacts:
+
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_hard_donor_controls.csv`
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_hard_donor_random_summary.csv`
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_gene_shuffle_controls.csv`
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_gene_shuffle_random_summary.csv`
+- `cohort-level-bench/baseline/robustness_controls_20260525/heterogeneity_gene_shuffle_hard_readout_controls.csv`
+
+Rows:
+
+- 44 strict cohort ORR target rows are used in each real/control metric row.
+- The public CSVs are metric-level control rows and null summaries, not raw
+  patient-level or per-cell predictions.
+
+Controls:
+
+- Hard donor: same-patient wrong-drug donor contexts. This tests whether the
+  readout remains context-specific when the donor/drug context is deliberately
+  mismatched.
+- Gene-swap/gene-shuffle: preserves random-control sizes and signs while
+  shuffling gene identity. This tests whether the signal depends on correct
+  gene/module semantics.
+
+Primary variant:
+
+```text
+signed_mag_tail_soft_primary
+```
+
+Primary metric:
+
+```text
+within_disease_pair_weighted_spearman
+```
+
+Null summaries are recomputed as:
+
+```text
+null_mean = mean(random-control within-disease Spearman)
+null_p95 = 95th percentile(random-control within-disease Spearman)
+empirical_p = fraction(random controls >= real within-disease Spearman)
+```
+
+Released primary-control results:
+
+- Real within-disease Spearman: 0.439
+- Random same-patient wrong-drug donor null n: 20
+- Hard-donor null mean: -0.101
+- Hard-donor null p95: 0.232
+- Hard-donor empirical p >= real: 0.000
+- Gene-swap null n: 100
+- Gene-swap null mean: 0.009
+- Gene-swap null p95: 0.371
+- Gene-swap empirical p >= real: 0.010
+
+Boundary:
+
+- These controls are robustness baselines, not the Gaia, Atlas, or DepMap
+  headline predictors.
+- They are included to show whether a response readout remains above
+  deliberately corrupted donor/context and gene/module nulls.
 
 ## Reproduction Commands
 

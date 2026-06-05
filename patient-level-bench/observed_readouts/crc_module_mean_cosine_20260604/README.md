@@ -1,6 +1,6 @@
 # CRC Module Mean Cosine Readout
 
-This folder contains the public CRC module mean cosine artifact. It asks whether the v13.1b visible-persistent cascade predicted tumor program delta aligns with the measured tumor on-treatment minus pretreatment delta.
+This folder contains the public CRC module mean cosine artifact. It asks whether the Gaia visible-persistent cascade predicted tumor program delta aligns with the measured tumor on-treatment minus pretreatment delta.
 
 This is the public cosine readout for the CRC cascade alignment surface. It is not the public pretreatment CRC rank-score benchmark and does not replace `response_score_rank_calibrated`.
 
@@ -44,7 +44,7 @@ Step 4 is the best step by cohort mean. Later steps decline in mean similarity.
 ## Boundary
 
 - Uses measured tumor on-treatment minus pretreatment delta as the observed target.
-- Uses v13.1b `visible_persistent` cascade predicted deltas.
+- Uses Gaia `visible_persistent` cascade predicted deltas.
 - Reports program-level module alignment, not exact within-module gene reconstruction.
 - Does not evaluate pretreatment clinical response labels directly.
 - Does not replace the public CRC `response_score_rank_calibrated` prediction benchmark.
