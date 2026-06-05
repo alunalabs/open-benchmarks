@@ -32,10 +32,10 @@ Release summaries are under `results/`:
 - `depmap_orr_summary.json`
 - `depmap_orr_methodology.md`
 
-The negative marker-cache control audit is under
-`marker_cache_control_audit_20260525/`. It is not a promoted 44-row ORR
-baseline; it documents that a direct full-cache spreadsheet-marker scorer did
-not validate gene identity under hard-donor and gene-shuffle controls.
+Formula controls are under `formula_controls_20260605/`. They keep the released
+44-row Gaia score and metric path fixed, then corrupt ORR-label alignment.
+These are exact public controls for the checked-in score artifact, not
+donor/gene controls.
 
 ## Atlas Overfit Boundary
 
@@ -103,28 +103,28 @@ DepMap result on the same 44 target rows:
 - Spearman rho: `-0.044`
 - AUC above disease median: `0.474`
 
-## Marker-Cache Control Audit
+## Formula Controls
 
-`marker_cache_control_audit_20260525/` contains a negative hard-donor and
-gene-shuffle audit for the full-cache spreadsheet-marker scorer.
+`formula_controls_20260605/` contains deterministic controls for the released
+44-row Gaia score table.
 
-Hard donor replaces each row's marker list with the lowest-overlap same-cohort
-donor marker list. Gene shuffle preserves the control structure while
-shuffling marker identities. A validated marker-identity scorer should beat
-both controls; this one does not.
+Controls:
 
-Primary audit score: `full_marker_score_coverage_weighted_mean`.
+- `label_shuffle_global`: permutes observed ORR labels across all 44 rows.
+- `label_shuffle_within_disease`: permutes observed ORR labels only within each
+  disease.
 
-Headline audit result:
+Headline result:
 
-- Real standalone marker binary AUC: `0.366`
-- Real standalone marker binary Spearman: `-0.232`
-- Real standalone marker continuous-ORR Pearson: `-0.018`
-- Gene-shuffle AUC null p95: `0.611`
-- Gene-shuffle empirical p(null AUC >= real AUC): `0.765`
-- Hard-donor marker-swap AUC: `0.655`
+- Real Gaia 44 Pearson r: `0.650`
+- Global label-shuffle Pearson null p95: `0.275`
+- Within-disease label-shuffle Pearson null p95: `0.421`
+- Real Gaia 44 AUC above disease median: `0.752`
+- Within-disease label-shuffle AUC null p95: `0.633`
 
-Boundary: this is a cautionary audit, not a release-grade predictive baseline.
+Boundary: the public 44-row artifact contains final cohort scores, not the
+private per-patient axis/probability rows needed to recompute donor/gene
+controls. These are exact controls for the public score/metric artifact.
 
 ## Reproduce Atlas
 

@@ -10,6 +10,7 @@ probability columns are intentionally omitted from those row files.
 Reviewed model-score artifacts live under `model_scores/`.
 Observed readout artifacts live under `observed_readouts/`; these use measured
 on-treatment tissue deltas and are not pretreatment prediction benchmarks.
+Formula controls live under `baseline/formula_controls_20260605/`.
 
 ## CRC MOA-Tailored Rank Score
 
@@ -60,3 +61,15 @@ module-cosine artifact for 11 CRC patients:
 The calculation averages predicted and observed gene deltas within each scoring
 module, then computes cosine similarity across the resulting module-mean
 vectors. This is a program-alignment readout, not a direct responder classifier.
+
+## Formula Controls
+
+`baseline/formula_controls_20260605/` contains deterministic controls that
+recompute the released patient formulas after corrupting alignment:
+
+- CRC label shuffle and CRC support-vector shuffle.
+- cSCC label shuffle and cSCC axis-vector shuffle.
+
+These are exact public formula controls for the checked-in axis/module score
+tables. They are not private hard-donor controls, because donor/context
+reruns are not part of the released patient score artifacts.

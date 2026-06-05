@@ -1,0 +1,3 @@
+benchmark_level,benchmark_name,score_col,n,auc_response_high,fixed_0p5_balanced_accuracy,pr_minus_sd_mean,spearman_response_high,response_minus_nonresponse
+patient,crc_moa_tailored_rank,response_score_rank_calibrated,11,0.8,0.7333333333333334,0.3,,
+patient,cscc_checkpoint_compartment,relative_response_probability,12,0.9444444444444444,,,0.7724872793364281,0.03583432899694869

@@ -7,11 +7,12 @@ This repo was extracted from the internal `spatial-fun` monorepo.
 | Layer | Source surface | Intended public contents |
 | --- | --- | --- |
 | Patient benchmark | Patient-level production exports | CRC clinical rows, compact CRC rank-score table, cSCC checkpoint score table, metrics, policy summaries |
+| Patient formula controls | Released patient score tables | Label and axis/module-vector shuffles that recompute the public CRC and cSCC formulas |
 | Patient observed readout | CRC measured on-treatment delta audit | Compact module mean cosine trajectory, patient-step scores, and module vectors |
 | Cohort benchmark | Strict ORR cohort rows | 44-row clinical manifest, 44-row Gaia predicted ORR table, metrics |
 | Atlas ORR baseline | Atlas trial-arm CSV | Code, methodology, compact 44-row baseline prediction table, and result summaries; raw Atlas remains external |
 | DepMap ORR baseline | DepMap model/drug matrices | Code, methodology, 44-row feature table, and baseline result summaries; raw matrices remain external |
-| Cohort control audit | Full-cache marker scorer audit | Sanitized real, hard-donor, and gene-shuffle marker-cache score/metric rows; negative audit only |
+| Cohort formula controls | Released 44-row Gaia score table | Global and within-disease ORR-label shuffles over the public score/metric path |
 
 BioBench is not part of this public release. The public cohort surface is the
 strict 44-row ORR set.
@@ -50,6 +51,13 @@ Patient-level cSCC:
 - `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/cscc_checkpoint_compartment_metrics_20260604.csv`
 - `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/reproduce_cscc_checkpoint_compartment.py`
 
+Patient-level formula controls:
+
+- `patient-level-bench/baseline/formula_controls_20260605/patient_formula_control_real_metrics.csv`
+- `patient-level-bench/baseline/formula_controls_20260605/patient_formula_control_metrics.csv`
+- `patient-level-bench/baseline/formula_controls_20260605/patient_formula_control_summary.csv`
+- `scripts/reproduce_formula_controls.py`
+
 Patient-level CRC module mean cosine readout:
 
 - `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_step_summary.csv`
@@ -64,6 +72,13 @@ Cohort-level strict ORR:
 - [cohort-level-bench/model_scores/gaia/gaia_metrics.csv](../cohort-level-bench/model_scores/gaia/gaia_metrics.csv)
 - [cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json](../cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json)
 - [cohort-level-bench/model_scores/gaia/reproduce_gaia_metrics.py](../cohort-level-bench/model_scores/gaia/reproduce_gaia_metrics.py)
+
+Cohort-level formula controls:
+
+- `cohort-level-bench/baseline/formula_controls_20260605/cohort_formula_control_real_metrics.csv`
+- `cohort-level-bench/baseline/formula_controls_20260605/cohort_formula_control_metrics.csv`
+- `cohort-level-bench/baseline/formula_controls_20260605/cohort_formula_control_summary.csv`
+- `scripts/reproduce_formula_controls.py`
 
 Atlas ORR baseline:
 
@@ -91,12 +106,3 @@ DepMap ORR baseline:
 - `cohort-level-bench/baseline/results/depmap_orr_features.csv`
 - `cohort-level-bench/baseline/results/depmap_orr_metrics.csv`
 - `cohort-level-bench/baseline/results/depmap_orr_summary.json`
-
-Cohort-level marker-cache control audit:
-
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_real_scores.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_metrics.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_hard_donor_scores.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_hard_donor_metrics.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_gene_shuffle_metrics.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_gene_shuffle_null_summary.csv`

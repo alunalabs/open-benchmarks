@@ -12,11 +12,13 @@ This release includes:
   patient rows.
 - Patient-level CRC module mean cosine readout: 11 CRC patients across
   cascade steps 1-8.
+- Patient-level formula controls: label and axis/module-vector shuffles that
+  recompute the released CRC and cSCC formulas.
 - Cohort-level ORR benchmark: 44 strict observed ORR cohort-drug rows.
 - Cohort-level baselines: Atlas fixed `k=8` ORR prior and DepMap lineage
   sensitivity on the same 44 target rows.
-- Cohort-level marker-cache control audit: a negative hard-donor and
-  gene-shuffle audit for a non-promoted full-cache spreadsheet-marker scorer.
+- Cohort-level formula controls: label shuffles over the released 44-row Gaia
+  score table and metric path.
 
 This release excludes BioBench, full production prediction tables,
 patient-probability tables, raw spatial data, raw Atlas curation tables, and
@@ -168,6 +170,63 @@ Released metrics:
 - AUC response high: 0.944
 - Spearman response high: 0.772
 
+## Patient-Level Formula Controls
+
+Artifacts:
+
+- `patient-level-bench/baseline/formula_controls_20260605/patient_formula_control_real_metrics.csv`
+- `patient-level-bench/baseline/formula_controls_20260605/patient_formula_control_metrics.csv`
+- `patient-level-bench/baseline/formula_controls_20260605/patient_formula_control_summary.csv`
+- `scripts/reproduce_formula_controls.py`
+
+Rows:
+
+- CRC controls use the same 11 CRC rows as the public CRC rank benchmark.
+- cSCC controls use the same 12 cSCC rows as the checkpoint compartment
+  benchmark.
+- Deterministic control seed: `20260605`.
+- Control iterations per family: `1000`.
+
+CRC controls:
+
+```text
+crc_label_shuffle =
+  recompute CRC rank formula from released module supports,
+  then permute observed_responder labels
+
+crc_support_vector_shuffle =
+  permute complete five-module support vectors across patient labels,
+  then recompute the same CRC rank formula
+```
+
+cSCC controls:
+
+```text
+cscc_label_shuffle =
+  recompute cSCC product formula from released axes,
+  then permute response labels
+
+cscc_axis_vector_shuffle =
+  permute complete five-axis vectors across patient labels,
+  then recompute the same cSCC product formula
+```
+
+Released control summaries:
+
+- CRC real AUC: 0.800
+- CRC support-vector-shuffle AUC null p95: 0.800
+- CRC support-vector-shuffle empirical p(null AUC >= real): 0.062
+- cSCC real AUC: 0.944
+- cSCC axis-vector-shuffle AUC null p95: 0.806
+- cSCC axis-vector-shuffle empirical p(null AUC >= real): 0.003
+
+Boundary:
+
+- These controls recompute the released public formulas.
+- They are not private hard-donor controls; hard-donor controls require
+  upstream donor/context reruns that are not in the public patient score
+  artifacts.
+
 ## Patient-Level CRC Module Mean Cosine Readout
 
 Artifacts:
@@ -265,6 +324,55 @@ Released metrics:
 - Spearman rho: 0.594
 - MAE: 10.2 ORR percentage points
 - AUC above disease median: 0.752
+
+## Cohort-Level Formula Controls
+
+Artifacts:
+
+- `cohort-level-bench/baseline/formula_controls_20260605/cohort_formula_control_real_metrics.csv`
+- `cohort-level-bench/baseline/formula_controls_20260605/cohort_formula_control_metrics.csv`
+- `cohort-level-bench/baseline/formula_controls_20260605/cohort_formula_control_summary.csv`
+- `scripts/reproduce_formula_controls.py`
+
+Rows:
+
+- Same 44 strict observed ORR rows as the Gaia cohort benchmark.
+- Deterministic control seed: `20260605`.
+- Control iterations per family: `1000`.
+
+Controls:
+
+```text
+label_shuffle_global =
+  keep gaia_predicted_orr_pct fixed,
+  permute observed_orr_pct across all 44 rows,
+  recompute the same cohort metrics
+
+label_shuffle_within_disease =
+  keep gaia_predicted_orr_pct fixed,
+  permute observed_orr_pct only within disease,
+  recompute the same cohort metrics
+```
+
+Released control summaries:
+
+- Real Gaia 44 Pearson r: 0.650
+- Global label-shuffle Pearson null p95: 0.275
+- Within-disease label-shuffle Pearson null p95: 0.421
+- Real Gaia 44 Spearman rho: 0.594
+- Within-disease label-shuffle Spearman null p95: 0.379
+- Real Gaia 44 AUC above disease median: 0.752
+- Within-disease label-shuffle AUC null p95: 0.633
+
+Boundary:
+
+- These controls are exact for the released 44-row public score/metric artifact.
+- They are not hard-donor or gene-shuffle controls, because the public 44-row
+  artifact does not include per-patient axis/probability rows or donor/gene
+  inputs.
+- If those upstream inputs are released later, the correct hard-donor/gene
+  control should rerun the same cohort aggregation after donor/context or
+  gene-identity corruption.
 
 ## Atlas Fixed `k=8` ORR Baseline
 
@@ -390,68 +498,6 @@ Released metrics:
 - Spearman rho: -0.044
 - AUC above disease median: 0.474
 
-## Cohort-Level Marker-Cache Control Audit
-
-Artifacts:
-
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_real_scores.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_metrics.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_hard_donor_scores.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_hard_donor_metrics.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_gene_shuffle_metrics.csv`
-- `cohort-level-bench/baseline/marker_cache_control_audit_20260525/marker_full_cache_gene_shuffle_null_summary.csv`
-
-Rows:
-
-- 45 real full-cache marker rows with continuous ORR labels.
-- 39 of those rows have binary success labels for AUC.
-- This is not the strict 44-row Gaia/Atlas/DepMap target set; it is a separate
-  audit surface from the full-cache spreadsheet-marker experiment.
-- The public CSVs are sanitized row-level scores, metric rows, and null
-  summaries, not private checkpoints or per-cell predictions.
-
-Controls:
-
-- Hard donor: replace the intended marker context with a hard mismatched donor
-  marker context, then recompute the same marker score.
-- Gene-shuffle: shuffle marker-gene identity across 200 null iterations, then
-  recompute the same marker score and metric distribution.
-
-Primary audit score:
-
-```text
-full_marker_score_coverage_weighted_mean
-```
-
-Calculations:
-
-```text
-binary AUC = AUC(label_bin, full_marker_score_coverage_weighted_mean)
-binary Spearman = Spearman(label_bin, full_marker_score_coverage_weighted_mean)
-continuous Pearson = Pearson(best_available_primary_orr, full_marker_score_coverage_weighted_mean)
-gene_shuffle_null_p95 = 95th percentile(null metric over 200 shuffle iterations)
-empirical_p_ge_real = fraction(null metric >= real metric)
-```
-
-Released audit results:
-
-- Real binary AUC: 0.366
-- Real binary Spearman: -0.232
-- Real continuous ORR Pearson: -0.018
-- Gene-shuffle AUC null p95: 0.611
-- Gene-shuffle AUC empirical p >= real: 0.765
-- Hard-donor binary AUC: 0.655
-- Hard-donor binary Spearman: 0.269
-
-Boundary:
-
-- This audit is a negative control result, not a promoted baseline.
-- The corrupted controls can match or beat the real marker score, so this
-  full-cache marker scorer should not be interpreted as a robust response
-  predictor.
-- The promoted 44-row cohort benchmark remains the Gaia score table, with Atlas
-  fixed `k=8` and DepMap as the public baselines.
-
 ## Reproduction Commands
 
 Verify every checked-in release metric without external raw data:
@@ -469,6 +515,7 @@ python cohort-level-bench/baseline/reproduce_depmap_orr_results.py
 python patient-level-bench/model_scores/crc_moa_tailored_20260525/reproduce_crc_moa_tailored_rank_score.py
 python patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/reproduce_cscc_checkpoint_compartment.py
 python patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/reproduce_crc_module_mean_cosine.py
+python scripts/reproduce_formula_controls.py
 ```
 
 Regenerate Atlas/DepMap baseline feature rows from external source data:

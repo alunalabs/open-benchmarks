@@ -19,8 +19,8 @@ The detailed row, score, metric, and baseline methodology is in
 
 The patient-level benchmark asks whether a pretreatment spatial section can
 predict later clinical response for the same patient. The current public score
-artifact focuses on 11 metastatic CRC patients treated with KRAS-axis plus
-EGFR-axis regimens.
+artifacts include an 11-patient metastatic CRC rank-score benchmark and a
+12-patient cSCC checkpoint-compartment benchmark.
 
 <p align="center">
   <img src="docs/figures/blog-presponse-flow.png" alt="Patient-level response score flow" width="820">
@@ -37,6 +37,7 @@ Public artifacts:
 - `patient-level-bench/model_scores/cscc_checkpoint_compartment_20260604/reproduce_cscc_checkpoint_compartment.py`
 - `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/crc_module_mean_cosine_step_summary.csv`
 - `patient-level-bench/observed_readouts/crc_module_mean_cosine_20260604/reproduce_crc_module_mean_cosine.py`
+- `patient-level-bench/baseline/formula_controls_20260605/patient_formula_control_summary.csv`
 
 The public CRC score is `response_score_rank_calibrated`. It summarizes
 KRAS/MAPK, EGFR, cytostasis, escape-control, and kill-conversion module
@@ -71,6 +72,16 @@ Module mean cosine readout:
   tumor on-treatment minus pretreatment deltas; not a pretreatment prediction
   benchmark.
 
+Patient formula controls:
+
+- Folder: `patient-level-bench/baseline/formula_controls_20260605/`
+- CRC support-vector shuffle: recomputes the same CRC rank formula after
+  permuting full module-support vectors across patient labels.
+- cSCC axis-vector shuffle: recomputes the same cSCC product formula after
+  permuting full axis vectors across patient labels.
+- Boundary: these are exact public formula controls, not private hard-donor
+  controls.
+
 ## Cohort-Level Bench
 
 The cohort-level benchmark asks the same response question at trial-arm scale.
@@ -89,6 +100,7 @@ Public artifacts:
 - [cohort-level-bench/model_scores/gaia/gaia_metrics.csv](cohort-level-bench/model_scores/gaia/gaia_metrics.csv)
 - [cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json](cohort-level-bench/model_scores/gaia/gaia_model_score_summary.json)
 - [cohort-level-bench/model_scores/gaia/reproduce_gaia_metrics.py](cohort-level-bench/model_scores/gaia/reproduce_gaia_metrics.py)
+- [cohort-level-bench/baseline/formula_controls_20260605/cohort_formula_control_summary.csv](cohort-level-bench/baseline/formula_controls_20260605/cohort_formula_control_summary.csv)
 
 The public cohort score is `gaia_predicted_orr_pct`, evaluated directly against
 `orr_pct`.
@@ -141,15 +153,15 @@ DepMap drug sensitivity:
 DepMap is included as a negative external-data baseline on the same 44-row ORR
 surface.
 
-Marker-cache control audit:
+Cohort formula controls:
 
-- Folder: `cohort-level-bench/baseline/marker_cache_control_audit_20260525/`
-- Primary score: `full_marker_score_coverage_weighted_mean`
-- Real standalone marker binary AUC: `0.366`
-- Gene-shuffle AUC null p95: `0.611`
-- Hard-donor marker-swap AUC: `0.655`
-- Boundary: this is a negative control audit, not a promoted cohort ORR
-  baseline; the controls beat or contain the real standalone marker score.
+- Folder: `cohort-level-bench/baseline/formula_controls_20260605/`
+- Global label-shuffle Pearson null p95: `0.275`
+- Within-disease label-shuffle Pearson null p95: `0.421`
+- Within-disease label-shuffle AUC null p95: `0.633`
+- Boundary: these controls keep the released `gaia_predicted_orr_pct` score and
+  metric path fixed, then corrupt ORR-label alignment. They are exact controls
+  for the public 44-row artifact, not donor/gene controls.
 
 ## Install
 
@@ -177,6 +189,12 @@ Run every no-external-data release metric reproduction check:
 
 ```bash
 python scripts/reproduce_release_scores.py
+```
+
+Regenerate deterministic formula controls:
+
+```bash
+python scripts/reproduce_formula_controls.py
 ```
 
 The reproducibility notebooks are under `notebooks/`. They load the same

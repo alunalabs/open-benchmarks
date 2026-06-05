@@ -1,0 +1,13 @@
+benchmark_level,benchmark_name,control_family,metric,real_value,control_n,control_mean,control_p05,control_median,control_p95,control_max,empirical_p_ge_real
+patient,crc_moa_tailored_rank,crc_label_shuffle,auc_response_high,0.8,1000,0.5018666666666667,0.2,0.5,0.8,0.9666666666666667,0.055
+patient,crc_moa_tailored_rank,crc_label_shuffle,fixed_0p5_balanced_accuracy,0.7333333333333334,1000,0.4994,0.18333333333333335,0.55,0.7333333333333334,0.9166666666666667,0.165
+patient,crc_moa_tailored_rank,crc_label_shuffle,pr_minus_sd_mean,0.3,1000,0.0018666666666666565,-0.29999999999999993,1.1102230246251565e-16,0.3,0.46666666666666673,0.055
+patient,crc_moa_tailored_rank,crc_support_vector_shuffle,auc_response_high,0.8,1000,0.4936,0.2,0.5,0.8,1.0,0.062
+patient,crc_moa_tailored_rank,crc_support_vector_shuffle,fixed_0p5_balanced_accuracy,0.7333333333333334,1000,0.49573333333333336,0.18333333333333335,0.55,0.7333333333333334,0.9166666666666667,0.16
+patient,crc_moa_tailored_rank,crc_support_vector_shuffle,pr_minus_sd_mean,0.3,1000,-0.006400000000000008,-0.29999999999999993,-1.1102230246251565e-16,0.3,0.49999999999999994,0.062
+patient,cscc_checkpoint_compartment,cscc_label_shuffle,auc_response_high,0.9444444444444444,1000,0.5005833333333333,0.19444444444444445,0.5,0.8055555555555556,1.0,0.007
+patient,cscc_checkpoint_compartment,cscc_label_shuffle,spearman_response_high,0.7724872793364281,1000,0.0010138895541290619,-0.5310850045437944,0.0,0.5310850045437944,0.8690481892534816,0.007
+patient,cscc_checkpoint_compartment,cscc_label_shuffle,response_minus_nonresponse,0.03583432899694869,1000,-0.000562057940097193,-0.02738892057851542,-0.00034850250490509223,0.027350436436126488,0.037041300554464765,0.007
+patient,cscc_checkpoint_compartment,cscc_axis_vector_shuffle,auc_response_high,0.9444444444444444,1000,0.4960833333333333,0.19444444444444445,0.5,0.8055555555555556,1.0,0.003
+patient,cscc_checkpoint_compartment,cscc_axis_vector_shuffle,spearman_response_high,0.7724872793364281,1000,-0.006807544149152273,-0.5310850045437944,0.0,0.5310850045437944,0.8690481892534816,0.003
+patient,cscc_checkpoint_compartment,cscc_axis_vector_shuffle,response_minus_nonresponse,0.03583432899694869,1000,-0.00046017969032718535,-0.026877856203293634,-0.00048753729594555595,0.026819385807659437,0.037041300554464765,0.003

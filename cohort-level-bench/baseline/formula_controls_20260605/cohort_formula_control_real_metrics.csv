@@ -1,0 +1,2 @@
+benchmark_level,benchmark_name,score_col,n_rows,pearson,spearman,auc_above_disease_median
+cohort,gaia_44_strict_orr,gaia_predicted_orr_pct,44,0.649918028959914,0.5941032698278416,0.7520661157024794

@@ -26,8 +26,8 @@ jupyter lab notebooks/
 
 Notebook index:
 
-- `01_cohort_benchmarks.ipynb`: Gaia cohort ORR, Atlas fixed-k baseline, and
-  DepMap baseline numbers, the negative marker-cache hard-donor/gene-shuffle
-  audit, and cohort-level figures.
+- `01_cohort_benchmarks.ipynb`: Gaia cohort ORR, Atlas fixed-k baseline,
+  DepMap baseline numbers, cohort formula controls, and cohort-level figures.
 - `02_patient_benchmarks.ipynb`: CRC rank score, cSCC checkpoint compartment
-  score, and CRC module mean cosine numbers plus patient-level figures.
+  score, CRC module mean cosine, patient formula controls, and patient-level
+  figures.
