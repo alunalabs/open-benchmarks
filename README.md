@@ -15,6 +15,10 @@ The detailed row, score, metric, and baseline methodology is in
 `docs/methodology.md`; the blog/Tahoe number cross-check is in
 `docs/alignment_report.md`.
 
+The release-level benchmark index is `benchmark_summary.csv`. It includes
+model scores, external baselines, observed readouts, and formula-control null
+comparisons in one machine-readable table.
+
 ## Patient-Level Bench
 
 The patient-level benchmark asks whether a pretreatment spatial section can
@@ -28,6 +32,7 @@ artifacts include an 11-patient metastatic CRC rank-score benchmark and a
 
 Public artifacts:
 
+- `patient-level-bench/benchmark_summary.csv`
 - `patient-level-bench/clinical_rows/crc_patient_clinical_rows_20260525.csv`
 - `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_rank_scores_20260525.csv`
 - `patient-level-bench/model_scores/crc_moa_tailored_20260525/crc_patient_moa_tailored_metrics_20260525.csv`
@@ -95,6 +100,7 @@ cohort figure.
 
 Public artifacts:
 
+- [cohort-level-bench/benchmark_summary.csv](cohort-level-bench/benchmark_summary.csv)
 - [cohort-level-bench/clinical_rows/cohort_benchmark_strict44_clinical_rows.csv](cohort-level-bench/clinical_rows/cohort_benchmark_strict44_clinical_rows.csv)
 - [cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv](cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv)
 - [cohort-level-bench/model_scores/gaia/gaia_metrics.csv](cohort-level-bench/model_scores/gaia/gaia_metrics.csv)
@@ -195,6 +201,12 @@ Regenerate deterministic formula controls:
 
 ```bash
 python scripts/reproduce_formula_controls.py
+```
+
+Regenerate benchmark-level summary indexes:
+
+```bash
+python scripts/rebuild_benchmark_summary.py
 ```
 
 The reproducibility notebooks are under `notebooks/`. They load the same

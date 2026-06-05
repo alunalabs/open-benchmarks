@@ -7,6 +7,9 @@ This document is the public methodology contract for the current
 
 This release includes:
 
+- Benchmark summary indexes: `benchmark_summary.csv`,
+  `patient-level-bench/benchmark_summary.csv`, and
+  `cohort-level-bench/benchmark_summary.csv`.
 - Patient-level CRC response benchmark: 11 pretreatment CRC patient rows.
 - Patient-level cSCC checkpoint response benchmark: 12 pretreatment cSCC
   patient rows.
@@ -29,6 +32,41 @@ baseline feature/prediction CSVs. Private model checkpoints, raw per-cell
 outputs, and source raw Atlas/DepMap matrices are external. Folder-local
 `reproduce_*.py` scripts and notebooks under `notebooks/` recompute the public
 metrics from the checked-in release artifacts.
+
+## Benchmark Summary Indexes
+
+Artifacts:
+
+- `benchmark_summary.csv`
+- `patient-level-bench/benchmark_summary.csv`
+- `cohort-level-bench/benchmark_summary.csv`
+- `scripts/rebuild_benchmark_summary.py`
+
+The summary indexes are derived from the checked-in metric and control
+artifacts. They do not introduce new scores. They provide one row per released
+metric or control comparison with:
+
+```text
+benchmark_level
+benchmark_id
+result_type
+metric
+direction
+score_col
+n_rows
+metric_value
+control_family
+control_p95
+empirical_p_ge_real
+artifact
+description
+```
+
+`result_type=formula_control` rows are the controls attached to the benchmark.
+For those rows, `metric_value` is the real unshuffled benchmark metric,
+`control_p95` is the 95th percentile of the matched null distribution, and
+`empirical_p_ge_real` is the fraction of control iterations whose metric is
+greater than or equal to the real metric.
 
 ## Shared Metrics
 

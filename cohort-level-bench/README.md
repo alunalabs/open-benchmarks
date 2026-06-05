@@ -6,8 +6,13 @@ predicted ORR percentage.
 
 The current public cohort target is the 44-row strict ORR set:
 
+- [benchmark_summary.csv](benchmark_summary.csv)
 - [clinical_rows/cohort_benchmark_strict44_clinical_rows.csv](clinical_rows/cohort_benchmark_strict44_clinical_rows.csv)
 - [model_scores/gaia/gaia_44_strict_orr_model_scores.csv](model_scores/gaia/gaia_44_strict_orr_model_scores.csv)
+
+`benchmark_summary.csv` is the cohort-level benchmark index. It includes the
+Gaia model-score metrics, Atlas and DepMap baselines, and formula-control rows
+that compare real Gaia metrics against label-shuffle null p95 values.
 
 ## Clinical Rows
 
@@ -51,3 +56,10 @@ The `baseline/` folder contains external-data baselines recomputed on the same
 
 The baseline scripts expect raw Atlas and DepMap source tables as local
 external inputs. The checked-in result summaries are small release artifacts.
+
+## Formula Controls
+
+Formula-control artifacts live under `baseline/formula_controls_20260605/`.
+They keep the released Gaia 44-row score fixed and recompute the same metrics
+after global or within-disease ORR-label shuffles. The benchmark summary
+includes the real metric, null p95, and empirical p-value for each control row.

@@ -33,7 +33,7 @@ def write_csv_rows(
     if fieldnames is None:
         fieldnames = infer_fieldnames(rows)
     with output.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(fieldnames))
+        writer = csv.DictWriter(handle, fieldnames=list(fieldnames), lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow({field: row.get(field, "") for field in fieldnames})
@@ -98,4 +98,3 @@ def relative_to_or_name(path: str | Path, root: str | Path) -> str:
         return str(path_obj.relative_to(root))
     except ValueError:
         return path_obj.name
-

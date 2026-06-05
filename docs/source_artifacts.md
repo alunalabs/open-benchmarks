@@ -6,6 +6,7 @@ This repo was extracted from the internal `spatial-fun` monorepo.
 
 | Layer | Source surface | Intended public contents |
 | --- | --- | --- |
+| Benchmark summary index | Checked-in public metric/control artifacts | Combined cohort/patient metric rows and formula-control comparisons |
 | Patient benchmark | Patient-level production exports | CRC clinical rows, compact CRC rank-score table, cSCC checkpoint score table, metrics, policy summaries |
 | Patient formula controls | Released patient score tables | Label and axis/module-vector shuffles that recompute the public CRC and cSCC formulas |
 | Patient observed readout | CRC measured on-treatment delta audit | Compact module mean cosine trajectory, patient-step scores, and module vectors |
@@ -37,6 +38,13 @@ Methodology:
 - `docs/methodology.md`
 - `notebooks/README.md`
 - `scripts/reproduce_release_scores.py`
+- `scripts/rebuild_benchmark_summary.py`
+
+Benchmark summary indexes:
+
+- `benchmark_summary.csv`
+- `patient-level-bench/benchmark_summary.csv`
+- `cohort-level-bench/benchmark_summary.csv`
 
 Patient-level CRC:
 

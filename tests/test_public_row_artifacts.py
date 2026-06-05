@@ -28,6 +28,11 @@ def read_csv(path: str) -> list[dict[str, str]]:
 def test_public_row_artifact_counts() -> None:
     summary = json.loads((ROOT / "docs/row_artifacts_summary.json").read_text())
 
+    assert summary["benchmark_summary"]["combined_rows"] == 39
+    assert summary["benchmark_summary"]["cohort_rows"] == 17
+    assert summary["benchmark_summary"]["patient_rows"] == 22
+    assert summary["benchmark_summary"]["formula_control_rows"] == 18
+
     assert summary["patient_level"]["universal_patient_response_axes_clinical_rows"] == 23
     assert summary["patient_level"]["crc_patient_clinical_rows"] == 11
     assert summary["patient_level"]["crc_moa_tailored_rank_score_rows"] == 11
@@ -110,6 +115,89 @@ def test_public_row_artifact_counts() -> None:
         round(cohort["within_disease_label_shuffle_pearson_empirical_p_ge_real"], 3) == 0.000
     )
     assert round(cohort["within_disease_label_shuffle_spearman_p95"], 3) == 0.379
+
+
+def _summary_lookup(
+    rows: list[dict[str, str]],
+    *,
+    benchmark_level: str,
+    benchmark_id: str,
+    result_type: str,
+    metric: str,
+    control_family: str = "",
+) -> dict[str, str]:
+    return next(
+        row
+        for row in rows
+        if row["benchmark_level"] == benchmark_level
+        and row["benchmark_id"] == benchmark_id
+        and row["result_type"] == result_type
+        and row["metric"] == metric
+        and row["control_family"] == control_family
+    )
+
+
+def test_benchmark_summary_indexes_include_formula_controls() -> None:
+    combined = read_csv("benchmark_summary.csv")
+    cohort = read_csv("cohort-level-bench/benchmark_summary.csv")
+    patient = read_csv("patient-level-bench/benchmark_summary.csv")
+
+    assert len(combined) == len(cohort) + len(patient) == 39
+    assert len(cohort) == 17
+    assert len(patient) == 22
+    assert sum(row["result_type"] == "formula_control" for row in combined) == 18
+    assert all("marker" not in row["description"].lower() for row in combined)
+
+    gaia_pearson = _summary_lookup(
+        combined,
+        benchmark_level="cohort",
+        benchmark_id="gaia_44_strict_orr",
+        result_type="model_score",
+        metric="pearson",
+    )
+    assert gaia_pearson["score_col"] == "gaia_predicted_orr_pct"
+    assert gaia_pearson["n_rows"] == "44"
+    assert round(float(gaia_pearson["metric_value"]), 3) == 0.650
+
+    cohort_control = _summary_lookup(
+        combined,
+        benchmark_level="cohort",
+        benchmark_id="gaia_44_strict_orr",
+        result_type="formula_control",
+        metric="pearson",
+        control_family="label_shuffle_within_disease",
+    )
+    assert round(float(cohort_control["metric_value"]), 3) == 0.650
+    assert round(float(cohort_control["control_p95"]), 3) == 0.421
+    assert round(float(cohort_control["empirical_p_ge_real"]), 3) == 0.000
+
+    crc_control = _summary_lookup(
+        combined,
+        benchmark_level="patient",
+        benchmark_id="crc_moa_tailored_rank",
+        result_type="formula_control",
+        metric="auc_response_high",
+        control_family="crc_support_vector_shuffle",
+    )
+    assert crc_control["score_col"] == "response_score_rank_calibrated"
+    assert crc_control["n_rows"] == "11"
+    assert round(float(crc_control["metric_value"]), 3) == 0.800
+    assert round(float(crc_control["control_p95"]), 3) == 0.800
+    assert round(float(crc_control["empirical_p_ge_real"]), 3) == 0.062
+
+    cscc_control = _summary_lookup(
+        combined,
+        benchmark_level="patient",
+        benchmark_id="cscc_checkpoint_compartment",
+        result_type="formula_control",
+        metric="auc_response_high",
+        control_family="cscc_axis_vector_shuffle",
+    )
+    assert cscc_control["score_col"] == "relative_response_probability"
+    assert cscc_control["n_rows"] == "12"
+    assert round(float(cscc_control["metric_value"]), 3) == 0.944
+    assert round(float(cscc_control["control_p95"]), 3) == 0.806
+    assert round(float(cscc_control["empirical_p_ge_real"]), 3) == 0.003
 
 
 def test_public_clinical_rows_are_metadata_only() -> None:
@@ -670,6 +758,7 @@ def test_methodology_doc_covers_public_release() -> None:
     methodology = (ROOT / "docs/methodology.md").read_text(encoding="utf-8")
 
     required_phrases = [
+        "Benchmark Summary Indexes",
         "Patient-Level CRC Benchmark",
         "Patient-Level cSCC Checkpoint Benchmark",
         "Patient-Level CRC Module Mean Cosine Readout",
@@ -679,6 +768,7 @@ def test_methodology_doc_covers_public_release() -> None:
         "DepMap ORR Baseline",
         "Cohort-Level Formula Controls",
         "reproduce_release_scores.py",
+        "rebuild_benchmark_summary.py",
         "Pearson r",
         "Spearman rho",
         "This release excludes BioBench",

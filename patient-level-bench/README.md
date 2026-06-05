@@ -3,6 +3,10 @@
 The patient-level benchmark evaluates whether pretreatment spatial sections can
 predict later clinical response for the same patient.
 
+`benchmark_summary.csv` is the patient-level benchmark index. It includes CRC
+and cSCC model-score metrics, the CRC observed readout, and formula-control
+rows with real metric, null p95, and empirical p-value fields.
+
 This folder includes compact clinical-row manifests under `clinical_rows/`.
 They contain benchmark identifiers and labels/metadata only; model score and
 probability columns are intentionally omitted from those row files.

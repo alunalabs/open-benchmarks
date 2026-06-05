@@ -1,4 +1,10 @@
 {
+  "benchmark_summary": {
+    "combined_rows": 39,
+    "cohort_rows": 17,
+    "patient_rows": 22,
+    "formula_control_rows": 18
+  },
   "cohort_level": {
     "atlas_fixed_k8_pearson": 0.46491446729880376,
     "atlas_fixed_k8_spearman": 0.4602344791806983,
@@ -56,5 +62,5 @@
     "cscc_checkpoint_compartment_spearman_response_high": 0.7724872793364281,
     "universal_patient_response_axes_clinical_rows": 23
   },
-  "policy": "Clinical row manifests include benchmark row identifiers and labels/metadata only. The reviewed patient-level CRC model-score folder includes a compact 11-row rank-score table. Patient-level formula controls recompute the released CRC and cSCC formulas after label or axis/module-vector shuffles. The reviewed cohort Gaia model-score folder includes the 44-row strict ORR score table and matching Atlas/DepMap baseline summaries. Cohort-level formula controls keep the released Gaia score and metric path fixed while shuffling ORR labels globally or within disease. Reproduce scripts and notebooks recompute metrics from the checked-in release score artifacts; private checkpoints, raw spatial data, donor/context reruns, gene-level controls, and raw Atlas/DepMap source matrices remain external."
+  "policy": "Clinical row manifests include benchmark row identifiers and labels/metadata only. Benchmark summary indexes include released model-score metrics, baselines, observed readouts, and formula-control comparisons in one table. The reviewed patient-level CRC model-score folder includes a compact 11-row rank-score table. Patient-level formula controls recompute the released CRC and cSCC formulas after label or axis/module-vector shuffles. The reviewed cohort Gaia model-score folder includes the 44-row strict ORR score table and matching Atlas/DepMap baseline summaries. Cohort-level formula controls keep the released Gaia score and metric path fixed while shuffling ORR labels globally or within disease. Reproduce scripts and notebooks recompute metrics from the checked-in release score artifacts; private checkpoints, raw spatial data, donor/context reruns, gene-level controls, and raw Atlas/DepMap source matrices remain external."
 }
