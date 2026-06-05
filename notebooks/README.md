@@ -1,7 +1,8 @@
 # Reproducibility Notebooks
 
 These notebooks recompute public benchmark metrics and regenerate the release
-figures from checked-in artifacts.
+figures from checked-in artifacts. The benchmark math is written directly in
+the notebooks so readers can inspect how each score and metric is computed.
 
 They are intentionally lightweight:
 
@@ -10,7 +11,9 @@ They are intentionally lightweight:
 - Raw spatial data, private checkpoints, per-cell inference outputs, raw Atlas
   tables, and raw DepMap matrices are external source artifacts.
 - The notebooks reproduce the published scores from released rows and score
-  columns and write generated SVG figures to `artifacts/notebook_figures/`.
+  columns by explicitly computing the metrics and score formulas in notebook
+  cells.
+- They write generated SVG figures to `artifacts/notebook_figures/`.
 - Atlas and DepMap source-data regeneration remains available through the
   baseline scripts under `cohort-level-bench/baseline/`.
 
