@@ -58,21 +58,6 @@ def test_public_row_artifact_counts() -> None:
     assert round(summary["patient_level"]["crc_module_mean_cosine_step4_mean"], 3) == 0.304
     assert round(summary["patient_level"]["crc_module_mean_cosine_step4_pr_mean"], 3) == 0.522
     assert round(summary["patient_level"]["crc_module_mean_cosine_step4_sd_mean"], 3) == 0.123
-    assert summary["patient_level"]["crc_prior_control_patient_score_rows"] == 33
-    assert summary["patient_level"]["crc_prior_control_patients_per_control"] == 11
-    assert summary["patient_level"]["crc_prior_control_primary_surface"] == (
-        "predicted_delta_moa_gate_response_probability"
-    )
-    assert round(summary["patient_level"]["crc_prior_control_gene_shuffled_auc"], 3) == 0.567
-    assert (
-        round(summary["patient_level"]["crc_prior_control_gene_shuffled_mean_abs_movement"], 3)
-        == 0.297
-    )
-    assert round(summary["patient_level"]["crc_prior_control_hard_donor_auc"], 3) == 0.633
-    assert (
-        round(summary["patient_level"]["crc_prior_control_hard_donor_mean_abs_movement"], 3)
-        == 0.014
-    )
 
     cohort = summary["cohort_level"]
     assert cohort["cohort_benchmark_strict44_clinical_rows"] == 44
@@ -87,12 +72,16 @@ def test_public_row_artifact_counts() -> None:
     assert cohort["depmap_covered_rows"] == 40
     assert round(cohort["depmap_primary_pearson"], 3) == -0.014
     assert round(cohort["depmap_primary_spearman"], 3) == -0.044
-    assert cohort["cohort_robustness_hard_donor_control_rows"] == 69
-    assert cohort["cohort_robustness_gene_shuffle_control_rows"] == 300
-    assert cohort["cohort_robustness_primary_variant"] == "signed_mag_tail_soft_primary"
-    assert round(cohort["cohort_robustness_real_wd_spearman"], 3) == 0.439
-    assert round(cohort["cohort_robustness_hard_donor_null_p95"], 3) == 0.232
-    assert round(cohort["cohort_robustness_gene_shuffle_null_p95"], 3) == 0.371
+    assert cohort["marker_full_cache_real_score_rows"] == 45
+    assert cohort["marker_full_cache_real_label_bin_rows"] == 39
+    assert cohort["marker_full_cache_gene_shuffle_metric_rows"] == 2000
+    assert cohort["marker_full_cache_gene_shuffle_summary_rows"] == 25
+    assert round(cohort["marker_full_cache_real_binary_auc"], 3) == 0.366
+    assert round(cohort["marker_full_cache_real_binary_spearman"], 3) == -0.232
+    assert round(cohort["marker_full_cache_real_continuous_orr_pearson"], 3) == -0.018
+    assert round(cohort["marker_full_cache_gene_shuffle_auc_null_p95"], 3) == 0.611
+    assert round(cohort["marker_full_cache_gene_shuffle_auc_empirical_p_ge_real"], 3) == 0.765
+    assert round(cohort["marker_full_cache_hard_donor_binary_auc"], 3) == 0.655
 
 
 def test_public_clinical_rows_are_metadata_only() -> None:
@@ -320,40 +309,6 @@ def test_crc_module_mean_cosine_readout() -> None:
     )
 
 
-def test_crc_prior_control_baseline_artifacts() -> None:
-    base = "patient-level-bench/baseline/crc_prior_controls_20260525"
-    rows = read_csv(f"{base}/crc_patient_prior_control_patient_scores.csv")
-    metrics = read_csv(f"{base}/crc_patient_prior_control_metrics.csv")
-    movement = read_csv(f"{base}/crc_patient_prior_control_vs_baseline.csv")
-    manifest = json.loads((ROOT / base / "MANIFEST.json").read_text())
-
-    forbidden = {"run_id", "model_label", "checkpoint_path"}
-    assert len(rows) == 33
-    assert len(metrics) == 30
-    assert len(movement) == 10
-    assert forbidden.isdisjoint(rows[0])
-    assert forbidden.isdisjoint(metrics[0])
-    assert set(row["control"] for row in rows) == {"baseline", "gene_shuffled", "hard_donor"}
-    assert all(row["model_family"] == "gaia" for row in metrics)
-    assert "crc_patient_prior_control_patient_scores.csv" in manifest
-
-    surface = "predicted_delta_moa_gate_response_probability"
-    by_metric = {(row["control"], row["surface"]): row for row in metrics}
-    by_movement = {(row["control"], row["surface"]): row for row in movement}
-
-    assert round(float(by_metric[("baseline", surface)]["auc_response_high"]), 3) == 0.633
-    assert round(float(by_metric[("gene_shuffled", surface)]["auc_response_high"]), 3) == 0.567
-    assert round(float(by_metric[("hard_donor", surface)]["auc_response_high"]), 3) == 0.633
-    assert (
-        round(float(by_movement[("gene_shuffled", surface)]["mean_abs_movement"]), 3)
-        == 0.297
-    )
-    assert (
-        round(float(by_movement[("hard_donor", surface)]["mean_abs_movement"]), 3)
-        == 0.014
-    )
-
-
 def test_gaia_public_model_score_rows() -> None:
     rows = read_csv("cohort-level-bench/model_scores/gaia/gaia_44_strict_orr_model_scores.csv")
     clinical_rows = read_csv(
@@ -429,30 +384,71 @@ def test_baseline_metrics_use_44_row_target() -> None:
     assert "default_score" not in depmap_features[0]
 
 
-def test_cohort_robustness_control_artifacts() -> None:
-    base = "cohort-level-bench/baseline/robustness_controls_20260525"
-    hard_controls = read_csv(f"{base}/heterogeneity_hard_donor_controls.csv")
-    hard_summary = read_csv(f"{base}/heterogeneity_hard_donor_random_summary.csv")
-    gene_controls = read_csv(f"{base}/heterogeneity_gene_shuffle_controls.csv")
-    gene_summary = read_csv(f"{base}/heterogeneity_gene_shuffle_random_summary.csv")
+def test_marker_cache_control_audit_artifacts() -> None:
+    base = "cohort-level-bench/baseline/marker_cache_control_audit_20260525"
+    real_scores = read_csv(f"{base}/marker_full_cache_real_scores.csv")
+    hard_scores = read_csv(f"{base}/marker_full_cache_hard_donor_scores.csv")
+    gene_sample_scores = read_csv(f"{base}/marker_full_cache_gene_shuffle_sample_scores.csv")
+    real_metrics = read_csv(f"{base}/marker_full_cache_metrics.csv")
+    hard_metrics = read_csv(f"{base}/marker_full_cache_hard_donor_metrics.csv")
+    gene_metrics = read_csv(f"{base}/marker_full_cache_gene_shuffle_metrics.csv")
+    gene_summary = read_csv(f"{base}/marker_full_cache_gene_shuffle_null_summary.csv")
     manifest = json.loads((ROOT / base / "MANIFEST.json").read_text())
 
-    assert len(hard_controls) == 69
-    assert len(hard_summary) == 3
-    assert len(gene_controls) == 300
-    assert len(gene_summary) == 3
-    assert "heterogeneity_gene_shuffle_controls.csv" in manifest
-    assert "heterogeneity_hard_donor_controls.csv" in manifest
+    forbidden = {"cache_path", "checkpoint_path", "model_label", "run_id"}
+    assert len(real_scores) == 45
+    assert len(hard_scores) == 45
+    assert len(gene_sample_scores) == 225
+    assert len(real_metrics) == 120
+    assert len(hard_metrics) == 60
+    assert len(gene_metrics) == 2000
+    assert len(gene_summary) == 25
+    assert forbidden.isdisjoint(real_scores[0])
+    assert forbidden.isdisjoint(hard_scores[0])
+    assert forbidden.isdisjoint(gene_metrics[0])
+    assert "marker_full_cache_real_scores.csv" in manifest
+    assert "marker_full_cache_gene_shuffle_null_summary.csv" in manifest
+    assert all("v13" not in file_name for file_name in manifest)
 
-    variant = "signed_mag_tail_soft_primary"
-    primary_hard = next(row for row in hard_summary if row["variant"] == variant)
-    primary_gene = next(row for row in gene_summary if row["variant"] == variant)
+    score_col = "full_marker_score_coverage_weighted_mean"
+    real_binary = next(
+        row
+        for row in real_metrics
+        if row["slice"] == "all" and row["score_col"] == score_col and row["target"] == "label_bin"
+    )
+    real_continuous = next(
+        row
+        for row in real_metrics
+        if row["slice"] == "all"
+        and row["score_col"] == score_col
+        and row["target"] == "best_available_primary_orr"
+    )
+    hard_binary = next(
+        row
+        for row in hard_metrics
+        if row["slice"] == "all" and row["score_col"] == score_col and row["target"] == "label_bin"
+    )
+    gene_auc = next(
+        row
+        for row in gene_summary
+        if row["slice"] == "all" and row["target"] == "label_bin" and row["metric"] == "auc_high"
+    )
+    gene_spearman = next(
+        row
+        for row in gene_summary
+        if row["slice"] == "all" and row["target"] == "label_bin" and row["metric"] == "spearman"
+    )
 
-    assert round(float(primary_hard["real_within_disease_spearman"]), 3) == 0.439
-    assert round(float(primary_hard["control_wd_spearman_p95"]), 3) == 0.232
-    assert float(primary_hard["empirical_p_wd_spearman_ge_real"]) == 0.0
-    assert round(float(primary_gene["control_wd_spearman_p95"]), 3) == 0.371
-    assert float(primary_gene["empirical_p_wd_spearman_ge_real"]) == 0.01
+    assert real_binary["n"] == "39"
+    assert real_continuous["n"] == "45"
+    assert round(float(real_binary["auc_high"]), 3) == 0.366
+    assert round(float(real_binary["spearman"]), 3) == -0.232
+    assert round(float(real_continuous["pearson"]), 3) == -0.018
+    assert round(float(gene_auc["null_p95"]), 3) == 0.611
+    assert round(float(gene_auc["empirical_p_ge_real"]), 3) == 0.765
+    assert round(float(gene_spearman["empirical_p_ge_real"]), 3) == 0.765
+    assert round(float(hard_binary["auc_high"]), 3) == 0.655
+    assert round(float(hard_binary["spearman"]), 3) == 0.269
 
 
 def test_reproduction_scripts_have_no_metric_drift() -> None:
@@ -543,11 +539,10 @@ def test_methodology_doc_covers_public_release() -> None:
         "Patient-Level CRC Benchmark",
         "Patient-Level cSCC Checkpoint Benchmark",
         "Patient-Level CRC Module Mean Cosine Readout",
-        "Patient-Level CRC Prior-Control Baselines",
         "Cohort-Level Gaia ORR Benchmark",
         "Atlas Fixed `k=8` ORR Baseline",
         "DepMap ORR Baseline",
-        "Cohort-Level Hard-Donor and Gene-Swap Controls",
+        "Cohort-Level Marker-Cache Control Audit",
         "reproduce_release_scores.py",
         "Pearson r",
         "Spearman rho",

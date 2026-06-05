@@ -1,0 +1,20 @@
+{
+  "full_marker_binary_auc_all": 0.36578947368421055,
+  "full_marker_binary_pearson_all": -0.2622125725052721,
+  "full_marker_binary_spearman_all": -0.23245945048950722,
+  "full_marker_continuous_orr_pearson_all": -0.01806236423884637,
+  "full_marker_continuous_orr_spearman_all": -0.03009608333857784,
+  "full_marker_crc_binary_auc": 0.3333333333333333,
+  "full_marker_crc_binary_spearman": -0.2817180849095055,
+  "full_marker_delta_binary_auc_all": 0.4026315789473684,
+  "full_marker_delta_prior_adjusted_auc_all": 0.7868421052631579,
+  "full_marker_delta_prior_adjusted_spearman_all": 0.5055213929734179,
+  "full_marker_gene_shuffle_auc_high_empirical_p_ge_real_all": 0.765,
+  "full_marker_gene_shuffle_auc_high_null_p95_all": 0.6106578947368421,
+  "full_marker_gene_shuffle_pearson_empirical_p_ge_real_all": 0.87,
+  "full_marker_gene_shuffle_pearson_null_p95_all": 0.16682806524760938,
+  "full_marker_gene_shuffle_spearman_empirical_p_ge_real_all": 0.765,
+  "full_marker_gene_shuffle_spearman_null_p95_all": 0.1916650959428191,
+  "full_marker_hard_donor_binary_auc_all": 0.6552631578947369,
+  "full_marker_hard_donor_binary_spearman_all": 0.26892367801727307
+}

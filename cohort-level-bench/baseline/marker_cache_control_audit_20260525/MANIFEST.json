@@ -1,0 +1,12 @@
+[
+  "README.md",
+  "MANIFEST.json",
+  "marker_full_cache_real_scores.csv",
+  "marker_full_cache_hard_donor_scores.csv",
+  "marker_full_cache_gene_shuffle_sample_scores.csv",
+  "marker_full_cache_metrics.csv",
+  "marker_full_cache_hard_donor_metrics.csv",
+  "marker_full_cache_gene_shuffle_metrics.csv",
+  "marker_full_cache_gene_shuffle_null_summary.csv",
+  "marker_full_cache_summary.json"
+]

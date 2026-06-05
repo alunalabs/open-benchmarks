@@ -32,10 +32,10 @@ Release summaries are under `results/`:
 - `depmap_orr_summary.json`
 - `depmap_orr_methodology.md`
 
-Robustness-control summaries are under
-`robustness_controls_20260525/`. These are null/control baselines for the
-44-row cohort readout, not replacement predictors for the Atlas or DepMap
-baselines.
+The negative marker-cache control audit is under
+`marker_cache_control_audit_20260525/`. It is not a promoted 44-row ORR
+baseline; it documents that a direct full-cache spreadsheet-marker scorer did
+not validate gene identity under hard-donor and gene-shuffle controls.
 
 ## Atlas Overfit Boundary
 
@@ -103,25 +103,28 @@ DepMap result on the same 44 target rows:
 - Spearman rho: `-0.044`
 - AUC above disease median: `0.474`
 
-## Robustness Controls
+## Marker-Cache Control Audit
 
-`robustness_controls_20260525/` contains compact hard-donor and gene-shuffle
-control summaries for the 44-row heterogeneity-magnitude cohort readout.
+`marker_cache_control_audit_20260525/` contains a negative hard-donor and
+gene-shuffle audit for the full-cache spreadsheet-marker scorer.
 
-Hard-donor controls replace the correct target context with same-patient
-wrong-drug donor contexts. They test whether the readout remains specific to
-the matched disease/drug context instead of preserving a generic patient rank.
+Hard donor replaces each row's marker list with the lowest-overlap same-cohort
+donor marker list. Gene shuffle preserves the control structure while
+shuffling marker identities. A validated marker-identity scorer should beat
+both controls; this one does not.
 
-Gene-shuffle controls preserve control sizes and signs while shuffling gene
-identity. They test whether the signal depends on the correct gene/module
-assignment rather than arbitrary score movement.
+Primary audit score: `full_marker_score_coverage_weighted_mean`.
 
-Primary signed-mag-tail-soft result:
+Headline audit result:
 
-- Real within-disease Spearman: `0.439`
-- Random same-patient wrong-drug donor null p95: `0.232`
-- Gene-shuffle null p95: `0.371`
-- Empirical p for gene-shuffle null >= real: `0.01`
+- Real standalone marker binary AUC: `0.366`
+- Real standalone marker binary Spearman: `-0.232`
+- Real standalone marker continuous-ORR Pearson: `-0.018`
+- Gene-shuffle AUC null p95: `0.611`
+- Gene-shuffle empirical p(null AUC >= real AUC): `0.765`
+- Hard-donor marker-swap AUC: `0.655`
+
+Boundary: this is a cautionary audit, not a release-grade predictive baseline.
 
 ## Reproduce Atlas
 
